@@ -33,6 +33,7 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QDateTime>
+#include <QTimeZone>
 #include <QTimeEdit>
 #include <QGroupBox>
 #include <QCheckBox>
