@@ -611,6 +611,7 @@ void AFormMain::menu_q_about_triggered ()
 		"<li><a href='https://github.com/astavonin'>Alexander Stavonin</a></li>"
 		"<li><a href='https://github.com/kan-izh'>kan-izh</a></li>"
 		"<li><a href='http://zarezky.spb.ru/'>Elijah Zarezky</a></li>"
+		"<li><a href='https://github.com/novitk'>Konstantin Novitsky</a></li>"
 		"</ul>"
 	);
 

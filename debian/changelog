@@ -1,3 +1,9 @@
+avalon3 (3.0.2) unstable; urgency=low
+
+  * Исправление time-zone для DST (летнее-зимнее время).
+
+ -- Anton Batenev <antonbatenev@yandex.ru>  Sun, 08 Jan 2023 10:56:10 +0300
+
 avalon3 (3.0.1) unstable; urgency=low
 
   * Поддержка Debian 11 (bullseye) / Ubuntu 20.04 (hirsute)

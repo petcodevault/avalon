@@ -735,13 +735,15 @@ QString AWebservice::getNextBlock (const QString* source, const QString& from, c
 	return result;
 }
 //----------------------------------------------------------------------------------------------
-static QTimeZone moscow("Europe/Moscow");
+// https://github.com/abbat/avalon/pull/4
+static const QTimeZone TZ_MOSCOW("Europe/Moscow");
+//----------------------------------------------------------------------------------------------
 QDateTime AWebservice::getDateTimeFromString (const QString& value)
 {
 	QDateTime dt = (value == "0001-01-01T00:00:00") ?
 		QDateTime::fromString("1970-01-01T00:00:00", Qt::ISODate):
 		QDateTime::fromString(value, Qt::ISODate);
-	dt.setTimeZone(moscow);
+	dt.setTimeZone(TZ_MOSCOW);
 	return dt;
 }
 //----------------------------------------------------------------------------------------------
