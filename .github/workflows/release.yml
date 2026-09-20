@@ -1,0 +1,185 @@
+name: Build and release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag to create or update (for example, v3.0.4)
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build (${{ matrix.name }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: ubuntu
+            os: ubuntu-latest
+          - name: windows
+            os: windows-latest
+          - name: macos
+            os: macos-latest
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install Ubuntu Qt 6 build dependencies
+        if: matrix.name == 'ubuntu'
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            debhelper \
+            dpkg-dev \
+            libaspell-dev \
+            qt6-base-dev \
+            qt6-base-dev-tools \
+            zlib1g-dev
+
+      - name: Build Ubuntu Debian package
+        if: matrix.name == 'ubuntu'
+        shell: bash
+        run: |
+          qmake6 --version
+          dpkg-buildpackage -us -uc -b
+          mkdir -p dist
+          DEB_PATH="$(find .. -maxdepth 1 -type f -name 'avalon3_*.deb' -print -quit)"
+          test -n "$DEB_PATH"
+          cp "$DEB_PATH" dist/avalon3-qt6-amd64.deb
+
+      - name: Set up Qt 6.10.1 and MinGW 13.1.0
+        if: matrix.name == 'windows'
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade aqtinstall
+          python -m aqt install-qt windows desktop 6.10.1 win64_mingw --outputdir C:\Qt
+          python -m aqt install-tool windows desktop tools_mingw1310 --outputdir C:\Qt
+          if (-not (Test-Path 'C:\Qt\6.10.1')) {
+            throw 'Qt 6.10.1 was not installed'
+          }
+
+      - name: Build Windows package
+        if: matrix.name == 'windows'
+        shell: pwsh
+        run: |
+          $qmake = Get-ChildItem 'C:\Qt' -Filter 'qmake*.exe' -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+          $gxx = Get-ChildItem 'C:\Qt\Tools' -Filter g++.exe -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+          if (-not $qmake -or -not $gxx) {
+            throw 'Qt qmake or MinGW compiler was not installed'
+          }
+          $qtBin = $qmake.DirectoryName
+          $mingwBin = $gxx.DirectoryName
+          $env:Path = "$qtBin;$mingwBin;$env:Path"
+          & $qmake.FullName --version
+          & $gxx.FullName --version
+          New-Item -ItemType Directory -Force -Path build/local-qt6 | Out-Null
+          Push-Location build/local-qt6
+          @'
+          CONFIG += release
+          QT += network sql core widgets
+          DEFINES += AVALON_TEXT_BROWSER AVALON_NO_EXTERNAL_LIBS
+          INCLUDEPATH += ../../src
+          TEMPLATE = app
+          TARGET = avalon
+          SOURCES += $$files(../../src/*.cpp, true)
+          HEADERS += $$files(../../src/*.h, true)
+          RESOURCES += ../../src/resource.qrc
+          '@ | Set-Content -Path avalon.pro -Encoding ascii
+          & $qmake.FullName avalon.pro -r
+          & (Join-Path $mingwBin 'mingw32-make.exe') -j4
+          New-Item -ItemType Directory -Force -Path ../../dist | Out-Null
+          $distDir = (Resolve-Path ../../dist).Path
+          $releaseDir = Join-Path (Get-Location) 'release'
+          & (Join-Path $qtBin 'windeployqt.exe') --release --no-translations (Join-Path $releaseDir 'avalon.exe')
+          Push-Location $releaseDir
+          $requiredRuntimeFiles = @('Qt6Core.dll', 'Qt6Gui.dll', 'Qt6Network.dll', 'Qt6Sql.dll', 'Qt6Widgets.dll', 'libgcc_s_seh-1.dll', 'libstdc++-6.dll', 'libwinpthread-1.dll', 'platforms/qwindows.dll', 'sqldrivers/qsqlite.dll')
+          $missingRuntimeFiles = $requiredRuntimeFiles | Where-Object { -not (Test-Path $_) }
+          if ($missingRuntimeFiles) { throw "Missing runtime files: $($missingRuntimeFiles -join ', ')" }
+          Compress-Archive -Path avalon.exe,*.dll,generic,iconengines,imageformats,networkinformation,platforms,sqldrivers,styles,tls -DestinationPath (Join-Path $distDir 'avalon-windows-x86_64.zip') -Force
+          Pop-Location
+          Pop-Location
+
+      - name: Set up Qt 6.10.1 for macOS
+        if: matrix.name == 'macos'
+        shell: bash
+        run: |
+          python3 -m venv "$RUNNER_TEMP/aqt-venv"
+          "$RUNNER_TEMP/aqt-venv/bin/python" -m pip install --upgrade pip aqtinstall
+          "$RUNNER_TEMP/aqt-venv/bin/python" -m aqt install-qt mac desktop 6.10.1 clang_64 --outputdir "$HOME/Qt"
+          test -x "$HOME/Qt/6.10.1/macos/bin/qmake"
+
+      - name: Build macOS package
+        if: matrix.name == 'macos'
+        shell: bash
+        run: |
+          QT_BIN="$HOME/Qt/6.10.1/macos/bin"
+          export PATH="$QT_BIN:$PATH"
+          "$QT_BIN/qmake" --version
+          clang++ --version
+          mkdir -p build/local-qt6
+          cd build/local-qt6
+          cat > avalon.pro <<'EOF'
+          CONFIG += release
+          QT += network sql core widgets
+          DEFINES += AVALON_TEXT_BROWSER AVALON_NO_EXTERNAL_LIBS
+          QMAKE_CXXFLAGS += -Wno-error=implicit-function-declaration
+          INCLUDEPATH += ../../src
+          TEMPLATE = app
+          TARGET = avalon
+          SOURCES += $$files(../../src/*.cpp, true)
+          HEADERS += $$files(../../src/*.h, true)
+          RESOURCES += ../../src/resource.qrc
+          EOF
+          "$QT_BIN/qmake" avalon.pro -r
+          make -j"$(sysctl -n hw.ncpu)"
+          mkdir -p ../../dist
+          APP_PATH="$(find . -maxdepth 2 -name 'avalon.app' -type d -print -quit)"
+          test -n "$APP_PATH"
+          "$QT_BIN/macdeployqt" "$APP_PATH"
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" ../../dist/avalon-macos.zip
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: avalon-${{ matrix.name }}
+          path: dist/*
+          if-no-files-found: error
+
+  release:
+    name: Publish GitHub release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          pattern: avalon-*
+          merge-multiple: true
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" dist/* \
+              --repo "$GITHUB_REPOSITORY" \
+              --clobber
+          else
+            gh release create "$RELEASE_TAG" dist/* \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "Avalon $RELEASE_TAG" \
+              --generate-notes
+          fi
