@@ -174,12 +174,13 @@ void FormModerateUI::restore ()
 {
 	QSettings settings;
 
-	QRect screen = QDesktopWidget().screenGeometry(this);
+	QScreen* screen = QGuiApplication::primaryScreen();
+	QRect screen_rect = screen ? screen->availableGeometry() : QRect();
 
 	int w = settings.value("form_moderate/width",  width()).toInt();
 	int h = settings.value("form_moderate/height", height()).toInt();
-	int x = settings.value("form_moderate/left",   (screen.width()  - w) / 2).toInt();
-	int y = settings.value("form_moderate/top",    (screen.height() - h) / 2).toInt();
+	int x = settings.value("form_moderate/left",   (screen_rect.width()  - w) / 2).toInt();
+	int y = settings.value("form_moderate/top",    (screen_rect.height() - h) / 2).toInt();
 
 	// setGeometry как-то некорректно работает :(
 	resize(w, h);

@@ -17,15 +17,21 @@
 #include <QTimer>
 #include <QLabel>
 #include <QDialog>
-#include <QRegExp>
+#include <QRegularExpression>
+#include <QRegularExpressionMatch>
 #include <QSysInfo>
 #include <QtGlobal>
-#include <QWebView>
+#ifndef AVALON_TEXT_BROWSER
+	#include <QWebView>
+#endif
 #include <QMenuBar>
+#include <QActionGroup>
 #include <QToolBar>
 #include <QPainter>
 #include <QProcess>
-#include <QWebFrame>
+#ifndef AVALON_TEXT_BROWSER
+	#include <QWebFrame>
+#endif
 #include <QLineEdit>
 #include <QSplitter>
 #include <QSettings>
@@ -41,7 +47,6 @@
 #include <QScrollBar>
 #include <QStatusBar>
 #include <QValidator>
-#include <QTextCodec>
 #include <QTcpSocket>
 #include <QSslSocket>
 #include <QSslCipher>
@@ -61,13 +66,14 @@
 #include <QProgressBar>
 #include <QSqlDatabase>
 #include <QApplication>
+#include <QScreen>
 #include <QTextBrowser>
 #include <QLibraryInfo>
 #include <QStyleFactory>
 #include <QIntValidator>
 #include <QNetworkProxy>
 #include <QNetworkReply>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QTemporaryFile>
 #include <QScopedPointer>
 #include <QNetworkRequest>
@@ -75,6 +81,60 @@
 #include <QDesktopServices>
 #include <QSslConfiguration>
 #include <QNetworkAccessManager>
+
+class QRegExp : public QRegularExpression
+{
+	public:
+		enum PatternSyntax { RegExp, RegExp2, Wildcard, FixedString };
+
+		QRegExp () : QRegularExpression() {}
+		QRegExp (const QString& pattern, Qt::CaseSensitivity cs = Qt::CaseSensitive, PatternSyntax syntax = RegExp)
+			: QRegularExpression(pattern, (cs == Qt::CaseInsensitive) ? QRegularExpression::CaseInsensitiveOption : QRegularExpression::NoPatternOption)
+		{
+			setPatternSyntax(syntax);
+		}
+
+		void setMinimal (bool minimal)
+		{
+			if (minimal == true)
+				setPatternOptions(patternOptions() | QRegularExpression::InvertedGreedinessOption);
+			else
+				setPatternOptions(patternOptions() & ~QRegularExpression::InvertedGreedinessOption);
+		}
+
+		int indexIn (const QString& str, int offset = 0) const
+		{
+			QRegularExpressionMatch match = QRegularExpression::match(str, offset);
+			if (match.hasMatch() == false)
+				return -1;
+
+			m_last_match = match;
+			return match.capturedStart();
+		}
+
+		int matchedLength () const
+		{
+			return static_cast<int>(m_last_match.capturedLength());
+		}
+
+		QString cap (int nth = 0) const
+		{
+			return m_last_match.captured(nth);
+		}
+
+		QStringList capturedTexts () const
+		{
+			return m_last_match.capturedTexts();
+		}
+
+	private:
+		void setPatternSyntax (PatternSyntax syntax)
+		{
+			Q_UNUSED(syntax);
+		}
+
+		mutable QRegularExpressionMatch m_last_match;
+};
 
 // на момент ответвления 3.x минимально поддерживаемая версия Qt 5.9 LTS (5.9.9)
 #if QT_VERSION < 0x050909
@@ -102,7 +162,7 @@
 	#endif
 #endif
 
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) && !defined(AVALON_NO_EXTERNAL_LIBS)
 	// возможность сжатия тел сообщений
 	#define AVALON_USE_ZLIB
 	#ifdef AVALON_USE_ZLIB

@@ -1617,7 +1617,7 @@ void AMessageTree::processUrl (const QString& url)
 	info.IDMessage = item->pag()->ID;
 	info.Rate      = rate;
 	info.Date      = QDateTime::currentDateTime();
-	info.ID        = info.Date.toTime_t(); // это локальный ID
+	info.ID        = static_cast<int>(info.Date.toSecsSinceEpoch()); // это локальный ID
 
 	// добавление рейтинга
 	if (storage->addRating2Send(info) == false)

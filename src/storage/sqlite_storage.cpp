@@ -1,11 +1,11 @@
-#include "sqlite_storage.h"
+﻿#include "sqlite_storage.h"
 //----------------------------------------------------------------------------------------------
 #include "global.h"
 //----------------------------------------------------------------------------------------------
 
 ASQLiteStorage::ASQLiteStorage () : ASQLiteDatabase(), IAStorage ()
 {
-	// установка кода последней ошибки как "ОК"
+	// СѓСЃС‚Р°РЅРѕРІРєР° РєРѕРґР° РїРѕСЃР»РµРґРЅРµР№ РѕС€РёР±РєРё РєР°Рє "РћРљ"
 	returnSuccess();
 }
 //----------------------------------------------------------------------------------------------
@@ -52,13 +52,13 @@ bool ASQLiteStorage::createDatabase ()
 	QFile file(":sql/avalon.sqlite.sql");
 
 	if (file.open(QIODevice::ReadOnly) == false)
-		return returnError(QString::fromUtf8("Ошибка открытия ресурса"));
+		return returnError(QString::fromUtf8("РћС€РёР±РєР° РѕС‚РєСЂС‹С‚РёСЏ СЂРµСЃСѓСЂСЃР°"));
 
 	QString schema = QString::fromUtf8(file.readAll().data());
 
 	file.close();
 
-	QStringList statements = schema.split(';', QString::SkipEmptyParts);
+	QStringList statements = schema.split(';', Qt::SkipEmptyParts);
 
 	for (int i = 0; i < statements.count(); i++)
 	{
@@ -125,7 +125,7 @@ bool ASQLiteStorage::whoAmI (AUserInfo& info)
 	}
 
 	if (info.ID == -1)
-		return returnError(QString::fromUtf8("Пользователь ") + info.Name + QString::fromUtf8(" не найден"));
+		return returnError(QString::fromUtf8("РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ ") + info.Name + QString::fromUtf8(" РЅРµ РЅР°Р№РґРµРЅ"));
 
 	return returnSuccess();
 }
@@ -133,7 +133,7 @@ bool ASQLiteStorage::whoAmI (AUserInfo& info)
 
 bool ASQLiteStorage::getRowVersion (ARowVersion& list)
 {
-	list.User     = "AAAAAAAAAAA="; // 64х разрядное число 0 в кодировке Base64
+	list.User     = "AAAAAAAAAAA="; // 64С… СЂР°Р·СЂСЏРґРЅРѕРµ С‡РёСЃР»Рѕ 0 РІ РєРѕРґРёСЂРѕРІРєРµ Base64
 	list.Message  = "AAAAAAAAAAA=";
 	list.Rating   = "AAAAAAAAAAA=";
 	list.Moderate = "AAAAAAAAAAA=";
@@ -269,7 +269,7 @@ bool ASQLiteStorage::setForumList (const AForumGroupInfoList& list)
 	QString sql;
 
 	//
-	// удаление несуществующих групп форумов
+	// СѓРґР°Р»РµРЅРёРµ РЅРµСЃСѓС‰РµСЃС‚РІСѓСЋС‰РёС… РіСЂСѓРїРї С„РѕСЂСѓРјРѕРІ
 	//
 
 	sql += "DELETE FROM";
@@ -313,7 +313,7 @@ bool ASQLiteStorage::setForumList (const AForumGroupInfoList& list)
 	}
 
 	//
-	// удаление несуществующих форумов
+	// СѓРґР°Р»РµРЅРёРµ РЅРµСЃСѓС‰РµСЃС‚РІСѓСЋС‰РёС… С„РѕСЂСѓРјРѕРІ
 	//
 
 	sql = "";
@@ -321,14 +321,14 @@ bool ASQLiteStorage::setForumList (const AForumGroupInfoList& list)
 
 	if (list.count() > 0)
 	{
-		// получение всех id форумов
+		// РїРѕР»СѓС‡РµРЅРёРµ РІСЃРµС… id С„РѕСЂСѓРјРѕРІ
 		QList<int> ids;
 
 		for (int group_index = 0; group_index < list.count(); group_index++)
 			for (int forum_index = 0; forum_index < list[group_index].Forums.count(); forum_index++)
 				ids.append(list[group_index].Forums[forum_index].ID);
 
-		// формирование sql
+		// С„РѕСЂРјРёСЂРѕРІР°РЅРёРµ sql
 		if (ids.count() > 0)
 		{
 			sql += "\n";
@@ -371,7 +371,7 @@ bool ASQLiteStorage::setForumList (const AForumGroupInfoList& list)
 	}
 
 	//
-	// добавление групп
+	// РґРѕР±Р°РІР»РµРЅРёРµ РіСЂСѓРїРї
 	//
 
 	if (list.count() > 0)
@@ -425,7 +425,7 @@ bool ASQLiteStorage::setForumList (const AForumGroupInfoList& list)
 	}
 
 	//
-	// добавление форумов
+	// РґРѕР±Р°РІР»РµРЅРёРµ С„РѕСЂСѓРјРѕРІ
 	//
 
 	if (list.count() > 0)
@@ -500,7 +500,7 @@ bool ASQLiteStorage::setForumList (const AForumGroupInfoList& list)
 	}
 
 	//
-	// завершение транзакции
+	// Р·Р°РІРµСЂС€РµРЅРёРµ С‚СЂР°РЅР·Р°РєС†РёРё
 	//
 
 	if (ASQLiteDatabase::commit() == false)
@@ -554,7 +554,7 @@ bool ASQLiteStorage::setSubscribedForumList (const ASubscribedForumInfoList& lis
 	QString sql;
 
 	//
-	// удаление форумов, от которых отписались
+	// СѓРґР°Р»РµРЅРёРµ С„РѕСЂСѓРјРѕРІ, РѕС‚ РєРѕС‚РѕСЂС‹С… РѕС‚РїРёСЃР°Р»РёСЃСЊ
 	//
 
 	sql += "DELETE FROM";
@@ -598,7 +598,7 @@ bool ASQLiteStorage::setSubscribedForumList (const ASubscribedForumInfoList& lis
 	}
 
 	//
-	// вставка форумов, на которые подписались
+	// РІСЃС‚Р°РІРєР° С„РѕСЂСѓРјРѕРІ, РЅР° РєРѕС‚РѕСЂС‹Рµ РїРѕРґРїРёСЃР°Р»РёСЃСЊ
 	//
 
 	if (list.count() > 0)
@@ -677,7 +677,7 @@ bool ASQLiteStorage::setSubscribedForumList (const ASubscribedForumInfoList& lis
 	}
 
 	//
-	// завершение транзакции
+	// Р·Р°РІРµСЂС€РµРЅРёРµ С‚СЂР°РЅР·Р°РєС†РёРё
 	//
 
 	if (ASQLiteDatabase::commit() == false)
@@ -737,7 +737,7 @@ bool ASQLiteStorage::setUserList (const AUserInfoList& list, const QString& row_
 	QString sql;
 
 	//
-	// сохранение версии списка
+	// СЃРѕС…СЂР°РЅРµРЅРёРµ РІРµСЂСЃРёРё СЃРїРёСЃРєР°
 	//
 
 	sql += "REPLACE INTO `row_version`\n";
@@ -773,7 +773,7 @@ bool ASQLiteStorage::setUserList (const AUserInfoList& list, const QString& row_
 	}
 
 	//
-	// сохранение пользователей
+	// СЃРѕС…СЂР°РЅРµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№
 	//
 
 	sql  = "";
@@ -836,7 +836,7 @@ bool ASQLiteStorage::setUserList (const AUserInfoList& list, const QString& row_
 	}
 
 	//
-	// завершение транзакции
+	// Р·Р°РІРµСЂС€РµРЅРёРµ С‚СЂР°РЅР·Р°РєС†РёРё
 	//
 
 	if (ASQLiteDatabase::commit() == false)
@@ -905,7 +905,7 @@ bool ASQLiteStorage::getMessageQuery (ADataQuery& query)
 	QString sql;
 
 	//
-	// список подписаных форумов
+	// СЃРїРёСЃРѕРє РїРѕРґРїРёСЃР°РЅС‹С… С„РѕСЂСѓРјРѕРІ
 	//
 
 	sql += "SELECT\n";
@@ -936,11 +936,11 @@ bool ASQLiteStorage::getMessageQuery (ADataQuery& query)
 	}
 
 	//
-	// список поломанных сообщений
+	// СЃРїРёСЃРѕРє РїРѕР»РѕРјР°РЅРЅС‹С… СЃРѕРѕР±С‰РµРЅРёР№
 	//
 
-	// За время прошедшее с предыдущей синхронизации сообщение могли отделить
-	// и вообще перенести в другой форум, поэтому parentId может быть не актуален.
+	// Р—Р° РІСЂРµРјСЏ РїСЂРѕС€РµРґС€РµРµ СЃ РїСЂРµРґС‹РґСѓС‰РµР№ СЃРёРЅС…СЂРѕРЅРёР·Р°С†РёРё СЃРѕРѕР±С‰РµРЅРёРµ РјРѕРіР»Рё РѕС‚РґРµР»РёС‚СЊ
+	// Рё РІРѕРѕР±С‰Рµ РїРµСЂРµРЅРµСЃС‚Рё РІ РґСЂСѓРіРѕР№ С„РѕСЂСѓРј, РїРѕСЌС‚РѕРјСѓ parentId РјРѕР¶РµС‚ Р±С‹С‚СЊ РЅРµ Р°РєС‚СѓР°Р»РµРЅ.
 	sql  = "";
 	sql += "SELECT\n";
 	sql += "	`id_message`\n";
@@ -967,7 +967,7 @@ bool ASQLiteStorage::getMessageQuery (ADataQuery& query)
 	}
 
 	//
-	// список поломанных топиков
+	// СЃРїРёСЃРѕРє РїРѕР»РѕРјР°РЅРЅС‹С… С‚РѕРїРёРєРѕРІ
 	//
 
 	sql  = "";
@@ -1011,7 +1011,7 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 	QString sql;
 
 	//
-	// сохранение версий
+	// СЃРѕС…СЂР°РЅРµРЅРёРµ РІРµСЂСЃРёР№
 	//
 
 	if (save_row_version == true)
@@ -1070,10 +1070,10 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 	}
 
 	//
-	// сохранение сообщений
+	// СЃРѕС…СЂР°РЅРµРЅРёРµ СЃРѕРѕР±С‰РµРЅРёР№
 	//
 
-	// запрос для вставки сообщений
+	// Р·Р°РїСЂРѕСЃ РґР»СЏ РІСЃС‚Р°РІРєРё СЃРѕРѕР±С‰РµРЅРёР№
 	sql  = "";
 	sql += "REPLACE INTO `message`\n";
 	sql += "(\n";
@@ -1131,7 +1131,7 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 		return returnError(msg);
 	}
 
-	// запрос для вставки в список топиков
+	// Р·Р°РїСЂРѕСЃ РґР»СЏ РІСЃС‚Р°РІРєРё РІ СЃРїРёСЃРѕРє С‚РѕРїРёРєРѕРІ
 	sql  = "";
 	sql += "REPLACE INTO `message_topic`\n";
 	sql += "(\n";
@@ -1157,7 +1157,7 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 		return returnError(msg);
 	}
 
-	// запрос для вставки в список непрочитанных сообщений
+	// Р·Р°РїСЂРѕСЃ РґР»СЏ РІСЃС‚Р°РІРєРё РІ СЃРїРёСЃРѕРє РЅРµРїСЂРѕС‡РёС‚Р°РЅРЅС‹С… СЃРѕРѕР±С‰РµРЅРёР№
 	sql  = "";
 	sql += "REPLACE INTO `unread`\n";
 	sql += "(\n";
@@ -1190,16 +1190,16 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 	}
 
 	#ifdef AVALON_USE_ZLIB
-	// заготовка памяти для сжатия сообщений
-	uLongf compressed_buf_size      = 3 * 1024 * 1024; // размер буфера для сжатых данных (может меняться при необходимости)
-	Bytef* compressed_buf           = 0;               // буфер для сжатых данных
-	uLongf compressed_buf_size_real = 0;               // реальная длина сжатых данных
+	// Р·Р°РіРѕС‚РѕРІРєР° РїР°РјСЏС‚Рё РґР»СЏ СЃР¶Р°С‚РёСЏ СЃРѕРѕР±С‰РµРЅРёР№
+	uLongf compressed_buf_size      = 3 * 1024 * 1024; // СЂР°Р·РјРµСЂ Р±СѓС„РµСЂР° РґР»СЏ СЃР¶Р°С‚С‹С… РґР°РЅРЅС‹С… (РјРѕР¶РµС‚ РјРµРЅСЏС‚СЊСЃСЏ РїСЂРё РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚Рё)
+	Bytef* compressed_buf           = 0;               // Р±СѓС„РµСЂ РґР»СЏ СЃР¶Р°С‚С‹С… РґР°РЅРЅС‹С…
+	uLongf compressed_buf_size_real = 0;               // СЂРµР°Р»СЊРЅР°СЏ РґР»РёРЅР° СЃР¶Р°С‚С‹С… РґР°РЅРЅС‹С…
 
 	if (global->Compression == true)
 		compressed_buf = new Bytef[compressed_buf_size];
 	#endif
 
-	// список для флагов наличия дочерних сообщений
+	// СЃРїРёСЃРѕРє РґР»СЏ С„Р»Р°РіРѕРІ РЅР°Р»РёС‡РёСЏ РґРѕС‡РµСЂРЅРёС… СЃРѕРѕР±С‰РµРЅРёР№
 	QList<int> check_parent;
 	QList<int> check_child;
 
@@ -1208,10 +1208,10 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 		AMessageInfo info = list.Message[i];
 
 		#ifdef AVALON_USE_ZLIB
-		// флаг того, что нужно сохранять сжатый вариант сообщения
+		// С„Р»Р°Рі С‚РѕРіРѕ, С‡С‚Рѕ РЅСѓР¶РЅРѕ СЃРѕС…СЂР°РЅСЏС‚СЊ СЃР¶Р°С‚С‹Р№ РІР°СЂРёР°РЅС‚ СЃРѕРѕР±С‰РµРЅРёСЏ
 		bool compressed = false;
 
-		// проверка необходимости сжатия
+		// РїСЂРѕРІРµСЂРєР° РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚Рё СЃР¶Р°С‚РёСЏ
 		if (global->Compression == true)
 		{
 			QByteArray message = info.Message.toUtf8();
@@ -1219,7 +1219,7 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 			uLongf       source_buf_size = message.count();
 			const Bytef* source_buf      = (const Bytef*)message.constData();
 
-			// проверка на достаточную размерность буфера сжатия
+			// РїСЂРѕРІРµСЂРєР° РЅР° РґРѕСЃС‚Р°С‚РѕС‡РЅСѓСЋ СЂР°Р·РјРµСЂРЅРѕСЃС‚СЊ Р±СѓС„РµСЂР° СЃР¶Р°С‚РёСЏ
 			if (source_buf_size * 2 > compressed_buf_size)
 			{
 				delete [] compressed_buf;
@@ -1229,10 +1229,10 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 
 			compressed_buf_size_real = compressed_buf_size;
 
-			// сжатие (см. документацию по zlib)
+			// СЃР¶Р°С‚РёРµ (СЃРј. РґРѕРєСѓРјРµРЅС‚Р°С†РёСЋ РїРѕ zlib)
 			int z_result = compress2(compressed_buf, &compressed_buf_size_real, source_buf, source_buf_size, 9);
 
-			// анализ результата, если произошла ошибка или размер сжатых данных больше исходных
+			// Р°РЅР°Р»РёР· СЂРµР·СѓР»СЊС‚Р°С‚Р°, РµСЃР»Рё РїСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР° РёР»Рё СЂР°Р·РјРµСЂ СЃР¶Р°С‚С‹С… РґР°РЅРЅС‹С… Р±РѕР»СЊС€Рµ РёСЃС…РѕРґРЅС‹С…
 			if (z_result != Z_OK)
 				compressed = false;
 			else if (compressed_buf_size_real >= source_buf_size)
@@ -1242,7 +1242,7 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 		}
 		#endif
 
-		// вставка сообщений
+		// РІСЃС‚Р°РІРєР° СЃРѕРѕР±С‰РµРЅРёР№
 		if (info.IDParent != 0)
 		{
 			if (check_parent.contains(info.IDParent) == false)
@@ -1276,12 +1276,12 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 		#endif
 
 		query_insert_message->bindValue(":id_article",       info.IDArticle);
-		query_insert_message->bindValue(":message_date",     info.MessageDate.toTime_t());
-		query_insert_message->bindValue(":update_date",      info.UpdateDate.toTime_t());
+		query_insert_message->bindValue(":message_date",     info.MessageDate.toSecsSinceEpoch());
+		query_insert_message->bindValue(":update_date",      info.UpdateDate.toSecsSinceEpoch());
 		query_insert_message->bindValue(":user_role",        info.UserRole);
 		query_insert_message->bindValue(":user_title",       info.UserTitle);
 		query_insert_message->bindValue(":user_title_color", info.UserTitleColor);
-		query_insert_message->bindValue(":last_moderated",   info.LastModerated.toTime_t());
+		query_insert_message->bindValue(":last_moderated",   info.LastModerated.toSecsSinceEpoch());
 		query_insert_message->bindValue(":closed",           (info.Closed == true ? 1 : 0));
 
 		#ifdef AVALON_USE_ZLIB
@@ -1293,7 +1293,7 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 		if (query_insert_message->exec() == false)
 		{
 			#ifdef AVALON_USE_ZLIB
-			// очистка буфера компрессии
+			// РѕС‡РёСЃС‚РєР° Р±СѓС„РµСЂР° РєРѕРјРїСЂРµСЃСЃРёРё
 			delete [] compressed_buf;
 			#endif
 
@@ -1302,17 +1302,17 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 			return returnError(query_insert_message->getLastError());
 		}
 
-		// сообщения с нулевым форумом в списке топиков не требуются
+		// СЃРѕРѕР±С‰РµРЅРёСЏ СЃ РЅСѓР»РµРІС‹Рј С„РѕСЂСѓРјРѕРј РІ СЃРїРёСЃРєРµ С‚РѕРїРёРєРѕРІ РЅРµ С‚СЂРµР±СѓСЋС‚СЃСЏ
 		if (info.IDTopic == 0 && info.IDForum != 0)
 		{
 			query_insert_message_topic->bindValue(":id_message",     info.ID);
 			query_insert_message_topic->bindValue(":id_forum",       info.IDForum);
-			query_insert_message_topic->bindValue(":message_date",   info.MessageDate.toTime_t());
+			query_insert_message_topic->bindValue(":message_date",   info.MessageDate.toSecsSinceEpoch());
 
 			if (query_insert_message_topic->exec() == false)
 			{
 				#ifdef AVALON_USE_ZLIB
-				// очистка буфера компрессии
+				// РѕС‡РёСЃС‚РєР° Р±СѓС„РµСЂР° РєРѕРјРїСЂРµСЃСЃРёРё
 				delete [] compressed_buf;
 				#endif
 
@@ -1322,20 +1322,20 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 			}
 		}
 
-		// странно, но бывают сообщения с нулевым форумом,
-		// которые потом будут вечно храниться в unread
+		// СЃС‚СЂР°РЅРЅРѕ, РЅРѕ Р±С‹РІР°СЋС‚ СЃРѕРѕР±С‰РµРЅРёСЏ СЃ РЅСѓР»РµРІС‹Рј С„РѕСЂСѓРјРѕРј,
+		// РєРѕС‚РѕСЂС‹Рµ РїРѕС‚РѕРј Р±СѓРґСѓС‚ РІРµС‡РЅРѕ С…СЂР°РЅРёС‚СЊСЃСЏ РІ unread
 		if (info.IDForum != 0 && save_row_version == true && query_insert_message->numRowsAffected() > 0)
 		{
 			query_insert_unread->bindValue(":id_message",     info.ID);
 			query_insert_unread->bindValue(":id_parent",      info.IDParent);
 			query_insert_unread->bindValue(":id_forum",       info.IDForum);
 			query_insert_unread->bindValue(":id_topic",       info.IDTopic);
-			query_insert_unread->bindValue(":message_date",   info.MessageDate.toTime_t());
+			query_insert_unread->bindValue(":message_date",   info.MessageDate.toSecsSinceEpoch());
 
 			if (query_insert_unread->exec() == false)
 			{
 				#ifdef AVALON_USE_ZLIB
-				// очистка буфера компрессии
+				// РѕС‡РёСЃС‚РєР° Р±СѓС„РµСЂР° РєРѕРјРїСЂРµСЃСЃРёРё
 				delete [] compressed_buf;
 				#endif
 
@@ -1347,12 +1347,12 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 	}
 
 	#ifdef AVALON_USE_ZLIB
-	// очистка буфера компрессии
+	// РѕС‡РёСЃС‚РєР° Р±СѓС„РµСЂР° РєРѕРјРїСЂРµСЃСЃРёРё
 	delete [] compressed_buf;
 	#endif
 
 	//
-	// обновление списка родительских пользователей в списке непрочитанных сообщений
+	// РѕР±РЅРѕРІР»РµРЅРёРµ СЃРїРёСЃРєР° СЂРѕРґРёС‚РµР»СЊСЃРєРёС… РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ РІ СЃРїРёСЃРєРµ РЅРµРїСЂРѕС‡РёС‚Р°РЅРЅС‹С… СЃРѕРѕР±С‰РµРЅРёР№
 	//
 
 	sql  = "";
@@ -1392,7 +1392,7 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 	}
 
 	//
-	// обновление маркеров дочерних сообщений
+	// РѕР±РЅРѕРІР»РµРЅРёРµ РјР°СЂРєРµСЂРѕРІ РґРѕС‡РµСЂРЅРёС… СЃРѕРѕР±С‰РµРЅРёР№
 	//
 
 	if (check_parent.count() > 0)
@@ -1503,7 +1503,7 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 	}
 
 	//
-	// сохранение рейтинга
+	// СЃРѕС…СЂР°РЅРµРЅРёРµ СЂРµР№С‚РёРЅРіР°
 	//
 
 	sql  = "";
@@ -1548,7 +1548,7 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 		query_insert_rating->bindValue(":id_user",       info.IDUser);
 		query_insert_rating->bindValue(":user_rating",   info.UserRating);
 		query_insert_rating->bindValue(":rate",          info.Rate);
-		query_insert_rating->bindValue(":rate_date",     info.RateDate.toTime_t());
+		query_insert_rating->bindValue(":rate_date",     info.RateDate.toSecsSinceEpoch());
 
 		// "+1" = -3, "1" = 1, "2" = 2, "3" = 3, "+" = -4, "-" = 0, ";)" = -2
 		if (info.Rate == -2)
@@ -1567,7 +1567,7 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 	}
 
 	//
-	// модерилки
+	// РјРѕРґРµСЂРёР»РєРё
 	//
 
 	sql  = "";
@@ -1607,7 +1607,7 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 		query_insert_moderate->bindValue(":id_topic",   info.IDTopic);
 		query_insert_moderate->bindValue(":id_user",    info.IDUser);
 		query_insert_moderate->bindValue(":id_forum",   info.IDForum);
-		query_insert_moderate->bindValue(":created",    info.Created.toTime_t());
+		query_insert_moderate->bindValue(":created",    info.Created.toSecsSinceEpoch());
 
 		if (query_insert_moderate->exec() == false)
 		{
@@ -1618,7 +1618,7 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 	}
 
 	//
-	// обновление подписаных форумов
+	// РѕР±РЅРѕРІР»РµРЅРёРµ РїРѕРґРїРёСЃР°РЅС‹С… С„РѕСЂСѓРјРѕРІ
 	//
 
 	sql  = "";
@@ -1646,7 +1646,7 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 	}
 
 	//
-	// очистка оборванных топиков/сообщений
+	// РѕС‡РёСЃС‚РєР° РѕР±РѕСЂРІР°РЅРЅС‹С… С‚РѕРїРёРєРѕРІ/СЃРѕРѕР±С‰РµРЅРёР№
 	//
 
 	sql  = "";
@@ -1671,7 +1671,7 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 	}
 
 	//
-	// вставка списка оборванных веток
+	// РІСЃС‚Р°РІРєР° СЃРїРёСЃРєР° РѕР±РѕСЂРІР°РЅРЅС‹С… РІРµС‚РѕРє
 	//
 
 	sql  = "";
@@ -1700,9 +1700,9 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 	sql += "	)\n";
 
 	/*
-	// попытка сразу сгруппировать записи приводит к дикому плану выполнения,
-	// в результате чего запрос будет выполняться очень долго по сравнению с запросом,
-	// где есть избыточные замещения уже вставленных записей
+	// РїРѕРїС‹С‚РєР° СЃСЂР°Р·Сѓ СЃРіСЂСѓРїРїРёСЂРѕРІР°С‚СЊ Р·Р°РїРёСЃРё РїСЂРёРІРѕРґРёС‚ Рє РґРёРєРѕРјСѓ РїР»Р°РЅСѓ РІС‹РїРѕР»РЅРµРЅРёСЏ,
+	// РІ СЂРµР·СѓР»СЊС‚Р°С‚Рµ С‡РµРіРѕ Р·Р°РїСЂРѕСЃ Р±СѓРґРµС‚ РІС‹РїРѕР»РЅСЏС‚СЊСЃСЏ РѕС‡РµРЅСЊ РґРѕР»РіРѕ РїРѕ СЃСЂР°РІРЅРµРЅРёСЋ СЃ Р·Р°РїСЂРѕСЃРѕРј,
+	// РіРґРµ РµСЃС‚СЊ РёР·Р±С‹С‚РѕС‡РЅС‹Рµ Р·Р°РјРµС‰РµРЅРёСЏ СѓР¶Рµ РІСЃС‚Р°РІР»РµРЅРЅС‹С… Р·Р°РїРёСЃРµР№
 	sql += "GROUP BY\n";
 	sql += "	`message`.`id_parent`";
 	*/
@@ -1726,7 +1726,7 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 	}
 
 	//
-	// вставка оборванных топиков
+	// РІСЃС‚Р°РІРєР° РѕР±РѕСЂРІР°РЅРЅС‹С… С‚РѕРїРёРєРѕРІ
 	//
 
 	sql  = "";
@@ -1755,9 +1755,9 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 	sql += "	)\n";
 
 	/*
-	// попытка сразу сгруппировать записи приводит к дикому плану выполнения,
-	// в результате чего запрос будет выполняться очень долго по сравнению с запросом,
-	// где есть избыточные замещения уже вставленных записей
+	// РїРѕРїС‹С‚РєР° СЃСЂР°Р·Сѓ СЃРіСЂСѓРїРїРёСЂРѕРІР°С‚СЊ Р·Р°РїРёСЃРё РїСЂРёРІРѕРґРёС‚ Рє РґРёРєРѕРјСѓ РїР»Р°РЅСѓ РІС‹РїРѕР»РЅРµРЅРёСЏ,
+	// РІ СЂРµР·СѓР»СЊС‚Р°С‚Рµ С‡РµРіРѕ Р·Р°РїСЂРѕСЃ Р±СѓРґРµС‚ РІС‹РїРѕР»РЅСЏС‚СЊСЃСЏ РѕС‡РµРЅСЊ РґРѕР»РіРѕ РїРѕ СЃСЂР°РІРЅРµРЅРёСЋ СЃ Р·Р°РїСЂРѕСЃРѕРј,
+	// РіРґРµ РµСЃС‚СЊ РёР·Р±С‹С‚РѕС‡РЅС‹Рµ Р·Р°РјРµС‰РµРЅРёСЏ СѓР¶Рµ РІСЃС‚Р°РІР»РµРЅРЅС‹С… Р·Р°РїРёСЃРµР№
 	sql += "GROUP BY\n";
 	sql += "	`message`.`id_topic`";
 	*/
@@ -1781,7 +1781,7 @@ bool ASQLiteStorage::setMessageList (const ADataList& list, const ARowVersion& r
 	}
 
 	//
-	// завершение транзакции
+	// Р·Р°РІРµСЂС€РµРЅРёРµ С‚СЂР°РЅР·Р°РєС†РёРё
 	//
 
 	if (ASQLiteDatabase::commit() == false)
@@ -1795,8 +1795,8 @@ bool ASQLiteStorage::getUnreadCount (AUnreadForumCountInfoList& list, int id_me)
 {
 	QString sql;
 
-	// запрос для выборки id форумов с непрочитанными сообщениями
-	// и общим количеством непрочитанных сообщений для каждого форума
+	// Р·Р°РїСЂРѕСЃ РґР»СЏ РІС‹Р±РѕСЂРєРё id С„РѕСЂСѓРјРѕРІ СЃ РЅРµРїСЂРѕС‡РёС‚Р°РЅРЅС‹РјРё СЃРѕРѕР±С‰РµРЅРёСЏРјРё
+	// Рё РѕР±С‰РёРј РєРѕР»РёС‡РµСЃС‚РІРѕРј РЅРµРїСЂРѕС‡РёС‚Р°РЅРЅС‹С… СЃРѕРѕР±С‰РµРЅРёР№ РґР»СЏ РєР°Р¶РґРѕРіРѕ С„РѕСЂСѓРјР°
 	sql += "SELECT\n";
 	sql += "	`id_forum`,\n";
 	sql += "	COUNT(*)\n";
@@ -1812,7 +1812,7 @@ bool ASQLiteStorage::getUnreadCount (AUnreadForumCountInfoList& list, int id_me)
 
 	query_select->setForwardOnly(true);
 
-	// запрос для выборки количества сообщений мне в форуме
+	// Р·Р°РїСЂРѕСЃ РґР»СЏ РІС‹Р±РѕСЂРєРё РєРѕР»РёС‡РµСЃС‚РІР° СЃРѕРѕР±С‰РµРЅРёР№ РјРЅРµ РІ С„РѕСЂСѓРјРµ
 	sql =  "";
 	sql += "SELECT\n";
 	sql += "	COUNT(*)\n";
@@ -1827,7 +1827,7 @@ bool ASQLiteStorage::getUnreadCount (AUnreadForumCountInfoList& list, int id_me)
 	if (query_select_my.isNull() == true)
 		return returnError(ASQLiteDatabase::getLastError());
 
-	// запрос для выборки количества новых топиков в форуме
+	// Р·Р°РїСЂРѕСЃ РґР»СЏ РІС‹Р±РѕСЂРєРё РєРѕР»РёС‡РµСЃС‚РІР° РЅРѕРІС‹С… С‚РѕРїРёРєРѕРІ РІ С„РѕСЂСѓРјРµ
 	sql =  "";
 	sql += "SELECT\n";
 	sql += "	COUNT(*)\n";
@@ -1871,10 +1871,10 @@ bool ASQLiteStorage::getUnreadCount (AUnreadForumCountInfoList& list, int id_me)
 	}
 
 	//
-	// получение количества из спец-папок
+	// РїРѕР»СѓС‡РµРЅРёРµ РєРѕР»РёС‡РµСЃС‚РІР° РёР· СЃРїРµС†-РїР°РїРѕРє
 	//
 
-	// сообщения к отправке
+	// СЃРѕРѕР±С‰РµРЅРёСЏ Рє РѕС‚РїСЂР°РІРєРµ
 	sql  = "";
 	sql += "SELECT\n";
 	sql += "	COUNT(*)\n";
@@ -1902,7 +1902,7 @@ bool ASQLiteStorage::getUnreadCount (AUnreadForumCountInfoList& list, int id_me)
 	if (info_message.Count > 0)
 		list.append(info_message);
 
-	// рейтинг к отправке
+	// СЂРµР№С‚РёРЅРі Рє РѕС‚РїСЂР°РІРєРµ
 	sql  = "";
 	sql += "SELECT\n";
 	sql += "	COUNT(*)\n";
@@ -1928,7 +1928,7 @@ bool ASQLiteStorage::getUnreadCount (AUnreadForumCountInfoList& list, int id_me)
 	if (info_rating.Count > 0)
 		list.append(info_rating);
 
-	// модерилки к отправке
+	// РјРѕРґРµСЂРёР»РєРё Рє РѕС‚РїСЂР°РІРєРµ
 	sql  = "";
 	sql += "SELECT\n";
 	sql += "	COUNT(*)\n";
@@ -1954,7 +1954,7 @@ bool ASQLiteStorage::getUnreadCount (AUnreadForumCountInfoList& list, int id_me)
 	if (info_moderate.Count > 0)
 		list.append(info_moderate);
 
-	// черновики
+	// С‡РµСЂРЅРѕРІРёРєРё
 	sql  = "";
 	sql += "SELECT\n";
 	sql += "	COUNT(*)\n";
@@ -1982,9 +1982,9 @@ bool ASQLiteStorage::getUnreadCount (AUnreadForumCountInfoList& list, int id_me)
 	if (info_draft.Count > 0)
 		list.append(info_draft);
 
-	// мои сообщения
-	// по хорошему, надо просто в табличку unread добавить поле id_user и индекс для пользователя,
-	// что сильно ускорит запрос, однако, менять схему пока не хочется
+	// РјРѕРё СЃРѕРѕР±С‰РµРЅРёСЏ
+	// РїРѕ С…РѕСЂРѕС€РµРјСѓ, РЅР°РґРѕ РїСЂРѕСЃС‚Рѕ РІ С‚Р°Р±Р»РёС‡РєСѓ unread РґРѕР±Р°РІРёС‚СЊ РїРѕР»Рµ id_user Рё РёРЅРґРµРєСЃ РґР»СЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ,
+	// С‡С‚Рѕ СЃРёР»СЊРЅРѕ СѓСЃРєРѕСЂРёС‚ Р·Р°РїСЂРѕСЃ, РѕРґРЅР°РєРѕ, РјРµРЅСЏС‚СЊ СЃС…РµРјСѓ РїРѕРєР° РЅРµ С…РѕС‡РµС‚СЃСЏ
 	sql  = "";
 	sql += "SELECT\n";
 	sql += "	COUNT(*)\n";
@@ -2015,7 +2015,7 @@ bool ASQLiteStorage::getUnreadCount (AUnreadForumCountInfoList& list, int id_me)
 	if (info_my_messages.Count > 0)
 		list.append(info_my_messages);
 
-	// ответы мне
+	// РѕС‚РІРµС‚С‹ РјРЅРµ
 	sql  = "";
 	sql += "SELECT\n";
 	sql += "	COUNT(*)\n";
@@ -2052,7 +2052,7 @@ bool ASQLiteStorage::getForumTopicList (int id_forum, int count, QList<int>& lis
 	QString sql;
 
 	//
-	// получение топиков для форума
+	// РїРѕР»СѓС‡РµРЅРёРµ С‚РѕРїРёРєРѕРІ РґР»СЏ С„РѕСЂСѓРјР°
 	//
 
 	sql += "SELECT\n";
@@ -2062,9 +2062,9 @@ bool ASQLiteStorage::getForumTopicList (int id_forum, int count, QList<int>& lis
 	sql += "WHERE\n";
 	sql += "	`id_forum` = " + QString::number(id_forum) + "\n";
 	sql += "ORDER BY\n";
-	// поскльку id_message автоинкремент и растет вместе с датой, то
-	// можно условно положиться на то, что бОльшему id_message соответствует
-	// бОльшая дата - в результате сортировка дает выигрыш в производительности более чем в 10 раз
+	// РїРѕСЃРєР»СЊРєСѓ id_message Р°РІС‚РѕРёРЅРєСЂРµРјРµРЅС‚ Рё СЂР°СЃС‚РµС‚ РІРјРµСЃС‚Рµ СЃ РґР°С‚РѕР№, С‚Рѕ
+	// РјРѕР¶РЅРѕ СѓСЃР»РѕРІРЅРѕ РїРѕР»РѕР¶РёС‚СЊСЃСЏ РЅР° С‚Рѕ, С‡С‚Рѕ Р±РћР»СЊС€РµРјСѓ id_message СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓРµС‚
+	// Р±РћР»СЊС€Р°СЏ РґР°С‚Р° - РІ СЂРµР·СѓР»СЊС‚Р°С‚Рµ СЃРѕСЂС‚РёСЂРѕРІРєР° РґР°РµС‚ РІС‹РёРіСЂС‹С€ РІ РїСЂРѕРёР·РІРѕРґРёС‚РµР»СЊРЅРѕСЃС‚Рё Р±РѕР»РµРµ С‡РµРј РІ 10 СЂР°Р·
 	//sql += "	`message_date` DESC";
 	sql += "	`id_message` DESC";
 
@@ -2088,7 +2088,7 @@ bool ASQLiteStorage::getForumTopicList (int id_forum, int count, QList<int>& lis
 		list.append(query_select->value(0).toInt());
 
 	//
-	// получение списка топиков в которых есть непрочитаные сообщения
+	// РїРѕР»СѓС‡РµРЅРёРµ СЃРїРёСЃРєР° С‚РѕРїРёРєРѕРІ РІ РєРѕС‚РѕСЂС‹С… РµСЃС‚СЊ РЅРµРїСЂРѕС‡РёС‚Р°РЅС‹Рµ СЃРѕРѕР±С‰РµРЅРёСЏ
 	//
 
 	sql  = "";
@@ -2118,8 +2118,8 @@ bool ASQLiteStorage::getForumTopicList (int id_forum, int count, QList<int>& lis
 	{
 		int id = query_select_unread_child->value(0).toInt();
 
-		// если число топиков ограничено лимитом, то возможна ситуация,
-		// когда непрочитанные топики не будут отображаться (см. #49)
+		// РµСЃР»Рё С‡РёСЃР»Рѕ С‚РѕРїРёРєРѕРІ РѕРіСЂР°РЅРёС‡РµРЅРѕ Р»РёРјРёС‚РѕРј, С‚Рѕ РІРѕР·РјРѕР¶РЅР° СЃРёС‚СѓР°С†РёСЏ,
+		// РєРѕРіРґР° РЅРµРїСЂРѕС‡РёС‚Р°РЅРЅС‹Рµ С‚РѕРїРёРєРё РЅРµ Р±СѓРґСѓС‚ РѕС‚РѕР±СЂР°Р¶Р°С‚СЊСЃСЏ (СЃРј. #49)
 		bool found = false;
 
 		for (int i = 0; i < list.count(); i++)
@@ -2137,7 +2137,7 @@ bool ASQLiteStorage::getForumTopicList (int id_forum, int count, QList<int>& lis
 	}
 
 	//
-	// получение списка непрочитаных топиков
+	// РїРѕР»СѓС‡РµРЅРёРµ СЃРїРёСЃРєР° РЅРµРїСЂРѕС‡РёС‚Р°РЅС‹С… С‚РѕРїРёРєРѕРІ
 	//
 
 	sql  = "";
@@ -2187,7 +2187,7 @@ bool ASQLiteStorage::getForumTopicList (int id_forum, int count, QList<int>& lis
 
 bool ASQLiteStorage::getTopicInfoList (int id_forum, AMessageInfoGUIPtrList& list, int id_me)
 {
-	// заполнение id-шников сообщений (топиков), которые требуется получить
+	// Р·Р°РїРѕР»РЅРµРЅРёРµ id-С€РЅРёРєРѕРІ СЃРѕРѕР±С‰РµРЅРёР№ (С‚РѕРїРёРєРѕРІ), РєРѕС‚РѕСЂС‹Рµ С‚СЂРµР±СѓРµС‚СЃСЏ РїРѕР»СѓС‡РёС‚СЊ
 	QString ids;
 
 	for (int i = 0; i < list.count(); i++)
@@ -2201,8 +2201,8 @@ bool ASQLiteStorage::getTopicInfoList (int id_forum, AMessageInfoGUIPtrList& lis
 	QString sql;
 
 	//
-	// получение инфы топика
-	// часть полей, не принимающих участия в GUI, пропущена
+	// РїРѕР»СѓС‡РµРЅРёРµ РёРЅС„С‹ С‚РѕРїРёРєР°
+	// С‡Р°СЃС‚СЊ РїРѕР»РµР№, РЅРµ РїСЂРёРЅРёРјР°СЋС‰РёС… СѓС‡Р°СЃС‚РёСЏ РІ GUI, РїСЂРѕРїСѓС‰РµРЅР°
 	//
 
 	sql += "SELECT\n";
@@ -2214,7 +2214,7 @@ bool ASQLiteStorage::getTopicInfoList (int id_forum, AMessageInfoGUIPtrList& lis
 	sql += "	`message_date`,\n";
 	sql += "	`has_child`\n";
 
-	// для пометки веток как прочитанных в дереве спец-форумов "Мои сообщения" и "Ответы мне"
+	// РґР»СЏ РїРѕРјРµС‚РєРё РІРµС‚РѕРє РєР°Рє РїСЂРѕС‡РёС‚Р°РЅРЅС‹С… РІ РґРµСЂРµРІРµ СЃРїРµС†-С„РѕСЂСѓРјРѕРІ "РњРѕРё СЃРѕРѕР±С‰РµРЅРёСЏ" Рё "РћС‚РІРµС‚С‹ РјРЅРµ"
 	if (id_forum == SPECIAL_ID_FORUM_MY_MESSAGES || id_forum == SPECIAL_ID_FORUM_ANSWERS_TO_ME)
 		sql += ",\n	id_topic";
 
@@ -2248,9 +2248,9 @@ bool ASQLiteStorage::getTopicInfoList (int id_forum, AMessageInfoGUIPtrList& lis
 
 			if (id == info->ID)
 			{
-				// часть полей, не принимающих участия в GUI, оставлена без изменений
-				info->IDTopic  = 0; // всегда 0 для топиков
-				info->IDParent = 0; // всегда 0 для топиков
+				// С‡Р°СЃС‚СЊ РїРѕР»РµР№, РЅРµ РїСЂРёРЅРёРјР°СЋС‰РёС… СѓС‡Р°СЃС‚РёСЏ РІ GUI, РѕСЃС‚Р°РІР»РµРЅР° Р±РµР· РёР·РјРµРЅРµРЅРёР№
+				info->IDTopic  = 0; // РІСЃРµРіРґР° 0 РґР»СЏ С‚РѕРїРёРєРѕРІ
+				info->IDParent = 0; // РІСЃРµРіРґР° 0 РґР»СЏ С‚РѕРїРёРєРѕРІ
 				info->IDUser   = query_select->value(1).toInt();
 
 				if (id_forum >= 0)
@@ -2260,7 +2260,7 @@ bool ASQLiteStorage::getTopicInfoList (int id_forum, AMessageInfoGUIPtrList& lis
 
 				info->Subject     = query_select->value(3).toString();
 				info->UserNick    = query_select->value(4).toString();
-				info->MessageDate = QDateTime::fromTime_t(query_select->value(5).toUInt());
+				info->MessageDate = QDateTime::fromSecsSinceEpoch(query_select->value(5).toUInt());
 
 				if (id_forum >= 0)
 					info->HasChild = query_select->value(6).toInt();
@@ -2278,7 +2278,7 @@ bool ASQLiteStorage::getTopicInfoList (int id_forum, AMessageInfoGUIPtrList& lis
 	}
 
 	//
-	// получение флага ответа мне (только для спец-форума "Мои сообщения")
+	// РїРѕР»СѓС‡РµРЅРёРµ С„Р»Р°РіР° РѕС‚РІРµС‚Р° РјРЅРµ (С‚РѕР»СЊРєРѕ РґР»СЏ СЃРїРµС†-С„РѕСЂСѓРјР° "РњРѕРё СЃРѕРѕР±С‰РµРЅРёСЏ")
 	//
 
 	if (id_forum == SPECIAL_ID_FORUM_MY_MESSAGES)
@@ -2324,7 +2324,7 @@ bool ASQLiteStorage::getTopicInfoList (int id_forum, AMessageInfoGUIPtrList& lis
 	}
 
 	//
-	// получение списка непрочитаных топиков и их отметка в запрошенном списке
+	// РїРѕР»СѓС‡РµРЅРёРµ СЃРїРёСЃРєР° РЅРµРїСЂРѕС‡РёС‚Р°РЅС‹С… С‚РѕРїРёРєРѕРІ Рё РёС… РѕС‚РјРµС‚РєР° РІ Р·Р°РїСЂРѕС€РµРЅРЅРѕРј СЃРїРёСЃРєРµ
 	//
 
 	sql  = "";
@@ -2361,12 +2361,12 @@ bool ASQLiteStorage::getTopicInfoList (int id_forum, AMessageInfoGUIPtrList& lis
 		}
 	}
 
-	// для ответов мне и моих сообщений дочерние не показываются
+	// РґР»СЏ РѕС‚РІРµС‚РѕРІ РјРЅРµ Рё РјРѕРёС… СЃРѕРѕР±С‰РµРЅРёР№ РґРѕС‡РµСЂРЅРёРµ РЅРµ РїРѕРєР°Р·С‹РІР°СЋС‚СЃСЏ
 	if (id_forum < 0)
 		return returnSuccess();
 
 	//
-	// получение списка непрочитаных дочерних и их отметка в запрошенном списке
+	// РїРѕР»СѓС‡РµРЅРёРµ СЃРїРёСЃРєР° РЅРµРїСЂРѕС‡РёС‚Р°РЅС‹С… РґРѕС‡РµСЂРЅРёС… Рё РёС… РѕС‚РјРµС‚РєР° РІ Р·Р°РїСЂРѕС€РµРЅРЅРѕРј СЃРїРёСЃРєРµ
 	//
 
 	sql  = "";
@@ -2407,7 +2407,7 @@ bool ASQLiteStorage::getTopicInfoList (int id_forum, AMessageInfoGUIPtrList& lis
 	}
 
 	//
-	// получение списка непрочитаных дочерних ответов мне и их отметка в запрошенном списке
+	// РїРѕР»СѓС‡РµРЅРёРµ СЃРїРёСЃРєР° РЅРµРїСЂРѕС‡РёС‚Р°РЅС‹С… РґРѕС‡РµСЂРЅРёС… РѕС‚РІРµС‚РѕРІ РјРЅРµ Рё РёС… РѕС‚РјРµС‚РєР° РІ Р·Р°РїСЂРѕС€РµРЅРЅРѕРј СЃРїРёСЃРєРµ
 	//
 
 	sql  = "";
@@ -2457,8 +2457,8 @@ bool ASQLiteStorage::getTopicMessageList (int id_forum, int id_topic, AMessageIn
 	QString sql;
 
 	//
-	// получение сообщений топика
-	// часть полей, не принимающих участия в GUI, пропущена
+	// РїРѕР»СѓС‡РµРЅРёРµ СЃРѕРѕР±С‰РµРЅРёР№ С‚РѕРїРёРєР°
+	// С‡Р°СЃС‚СЊ РїРѕР»РµР№, РЅРµ РїСЂРёРЅРёРјР°СЋС‰РёС… СѓС‡Р°СЃС‚РёСЏ РІ GUI, РїСЂРѕРїСѓС‰РµРЅР°
 	//
 
 	sql += "SELECT\n";
@@ -2475,9 +2475,9 @@ bool ASQLiteStorage::getTopicMessageList (int id_forum, int id_topic, AMessageIn
 	sql += "WHERE\n";
 	sql += "	`id_topic` = " + QString::number(id_topic) + "\n";
 	sql += "ORDER BY\n";
-	// поскльку id автоинкремент и растет вместе с датой, то
-	// можно условно положиться на то, что бОльшему id_message соответствует
-	// бОльшая дата - в результате сортировка дает выигрыш в производительности в более чем 10 раз
+	// РїРѕСЃРєР»СЊРєСѓ id Р°РІС‚РѕРёРЅРєСЂРµРјРµРЅС‚ Рё СЂР°СЃС‚РµС‚ РІРјРµСЃС‚Рµ СЃ РґР°С‚РѕР№, С‚Рѕ
+	// РјРѕР¶РЅРѕ СѓСЃР»РѕРІРЅРѕ РїРѕР»РѕР¶РёС‚СЊСЃСЏ РЅР° С‚Рѕ, С‡С‚Рѕ Р±РћР»СЊС€РµРјСѓ id_message СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓРµС‚
+	// Р±РћР»СЊС€Р°СЏ РґР°С‚Р° - РІ СЂРµР·СѓР»СЊС‚Р°С‚Рµ СЃРѕСЂС‚РёСЂРѕРІРєР° РґР°РµС‚ РІС‹РёРіСЂС‹С€ РІ РїСЂРѕРёР·РІРѕРґРёС‚РµР»СЊРЅРѕСЃС‚Рё РІ Р±РѕР»РµРµ С‡РµРј 10 СЂР°Р·
 	//sql += "	`message_date` DESC";
 	sql += "	`id` DESC";
 
@@ -2495,7 +2495,7 @@ bool ASQLiteStorage::getTopicMessageList (int id_forum, int id_topic, AMessageIn
 	{
 		AMessageInfoGUI* info = factory->createItem();
 
-		// часть полей, не принимающих участия в GUI, оставлена без изменений
+		// С‡Р°СЃС‚СЊ РїРѕР»РµР№, РЅРµ РїСЂРёРЅРёРјР°СЋС‰РёС… СѓС‡Р°СЃС‚РёСЏ РІ GUI, РѕСЃС‚Р°РІР»РµРЅР° Р±РµР· РёР·РјРµРЅРµРЅРёР№
 		info->ID       = query_select->value(0).toInt();
 		info->IDTopic  = id_topic;
 		info->IDParent = query_select->value(1).toInt();
@@ -2508,14 +2508,14 @@ bool ASQLiteStorage::getTopicMessageList (int id_forum, int id_topic, AMessageIn
 
 		info->Subject     = query_select->value(4).toString();
 		info->UserNick    = query_select->value(5).toString();
-		info->MessageDate = QDateTime::fromTime_t(query_select->value(6).toUInt());
+		info->MessageDate = QDateTime::fromSecsSinceEpoch(query_select->value(6).toUInt());
 		info->HasChild    = query_select->value(7).toInt();
 
 		list.append(info);
 	}
 
 	//
-	// непрочитанные сообщения
+	// РЅРµРїСЂРѕС‡РёС‚Р°РЅРЅС‹Рµ СЃРѕРѕР±С‰РµРЅРёСЏ
 	//
 
 	sql  = "";
@@ -2562,7 +2562,7 @@ bool ASQLiteStorage::getMessageBody (int id_message, QString& body)
 	QString sql;
 
 	//
-	// получение тела сообщения
+	// РїРѕР»СѓС‡РµРЅРёРµ С‚РµР»Р° СЃРѕРѕР±С‰РµРЅРёСЏ
 	//
 
 	sql += "SELECT\n";
@@ -2583,7 +2583,7 @@ bool ASQLiteStorage::getMessageBody (int id_message, QString& body)
 
 	while (query_select->next())
 	{
-		// флаг сжатия сообщения
+		// С„Р»Р°Рі СЃР¶Р°С‚РёСЏ СЃРѕРѕР±С‰РµРЅРёСЏ
 		bool compressed = query_select->value(1).toInt();
 
 		if (compressed == false)
@@ -2592,7 +2592,7 @@ bool ASQLiteStorage::getMessageBody (int id_message, QString& body)
 		{
 			#ifndef AVALON_USE_ZLIB
 
-			body = QString::fromUtf8("(тело сообщения сжато, скомпилируйте avalon с поддержкой zlib)");
+			body = QString::fromUtf8("(С‚РµР»Рѕ СЃРѕРѕР±С‰РµРЅРёСЏ СЃР¶Р°С‚Рѕ, СЃРєРѕРјРїРёР»РёСЂСѓР№С‚Рµ avalon СЃ РїРѕРґРґРµСЂР¶РєРѕР№ zlib)");
 
 			#else
 
@@ -2601,7 +2601,7 @@ bool ASQLiteStorage::getMessageBody (int id_message, QString& body)
 			uLongf       compressed_buf_size = message.count();
 			const Bytef* compressed_buf      = (const Bytef*)message.constData();
 
-			// по тестам сжатие составляет в среднем ~50%
+			// РїРѕ С‚РµСЃС‚Р°Рј СЃР¶Р°С‚РёРµ СЃРѕСЃС‚Р°РІР»СЏРµС‚ РІ СЃСЂРµРґРЅРµРј ~50%
 			uLongf       uncompressed_buf_size      = compressed_buf_size * 3;
 			Bytef*       uncompressed_buf           = new Bytef[uncompressed_buf_size];
 			uLongf       uncompressed_buf_size_real = uncompressed_buf_size;
@@ -2620,7 +2620,7 @@ bool ASQLiteStorage::getMessageBody (int id_message, QString& body)
 				}
 				else if (z_result == Z_BUF_ERROR)
 				{
-					// не хватило длины буфера для распаковки
+					// РЅРµ С…РІР°С‚РёР»Рѕ РґР»РёРЅС‹ Р±СѓС„РµСЂР° РґР»СЏ СЂР°СЃРїР°РєРѕРІРєРё
 					delete [] uncompressed_buf;
 
 					uncompressed_buf_size     *= 2;
@@ -2632,7 +2632,7 @@ bool ASQLiteStorage::getMessageBody (int id_message, QString& body)
 
 				delete [] uncompressed_buf;
 
-				// прочие фатальные ошибки
+				// РїСЂРѕС‡РёРµ С„Р°С‚Р°Р»СЊРЅС‹Рµ РѕС€РёР±РєРё
 				if (z_result == Z_MEM_ERROR)
 					return returnError("Z_MEM_ERROR: there was not enough memory.");
 				else if (z_result == Z_DATA_ERROR)
@@ -2654,7 +2654,7 @@ bool ASQLiteStorage::getMessageBody (int id_message, QString& body)
 
 bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool read, QDateTime date)
 {
-	// получение строки с id
+	// РїРѕР»СѓС‡РµРЅРёРµ СЃС‚СЂРѕРєРё СЃ id
 	QString ids;
 
 	for (int i = 0; i < list.count(); i++)
@@ -2669,7 +2669,7 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 	QString sql_2;
 
 	//
-	// получение тела сообщения
+	// РїРѕР»СѓС‡РµРЅРёРµ С‚РµР»Р° СЃРѕРѕР±С‰РµРЅРёСЏ
 	//
 
 	if (read == true)
@@ -2684,14 +2684,14 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 				sql += "	`id_message` IN (" + ids + ")";
 
 				if (date.isValid() == true)
-					sql += " AND\n	`message_date` <= " + QString::number(date.toTime_t());
+					sql += " AND\n	`message_date` <= " + QString::number(date.toSecsSinceEpoch());
 
 				break;
 
 			case idsTopic:
 
-				// запрос может давать очень плохой план выполнения (см. аналогичный при пометке как непрочитанное),
-				// однако, в `unread` обычно слишком мало строк, чтобы это было заметно
+				// Р·Р°РїСЂРѕСЃ РјРѕР¶РµС‚ РґР°РІР°С‚СЊ РѕС‡РµРЅСЊ РїР»РѕС…РѕР№ РїР»Р°РЅ РІС‹РїРѕР»РЅРµРЅРёСЏ (СЃРј. Р°РЅР°Р»РѕРіРёС‡РЅС‹Р№ РїСЂРё РїРѕРјРµС‚РєРµ РєР°Рє РЅРµРїСЂРѕС‡РёС‚Р°РЅРЅРѕРµ),
+				// РѕРґРЅР°РєРѕ, РІ `unread` РѕР±С‹С‡РЅРѕ СЃР»РёС€РєРѕРј РјР°Р»Рѕ СЃС‚СЂРѕРє, С‡С‚РѕР±С‹ СЌС‚Рѕ Р±С‹Р»Рѕ Р·Р°РјРµС‚РЅРѕ
 				sql += "DELETE FROM\n";
 				sql += "	`unread`\n";
 				sql += "WHERE\n";
@@ -2701,7 +2701,7 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 				sql += "	)";
 
 				if (date.isValid() == true)
-					sql += " AND\n	`message_date` <= " + QString::number(date.toTime_t());
+					sql += " AND\n	`message_date` <= " + QString::number(date.toSecsSinceEpoch());
 
 				break;
 
@@ -2709,7 +2709,7 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 
 				if (list.count() == 1 && (list[0] == SPECIAL_ID_FORUM_MY_MESSAGES || list[0] == SPECIAL_ID_FORUM_ANSWERS_TO_ME))
 				{
-					// получение id текущего пользователя avalon (по хорошему, должна передаваться как параметр)
+					// РїРѕР»СѓС‡РµРЅРёРµ id С‚РµРєСѓС‰РµРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ avalon (РїРѕ С…РѕСЂРѕС€РµРјСѓ, РґРѕР»Р¶РЅР° РїРµСЂРµРґР°РІР°С‚СЊСЃСЏ РєР°Рє РїР°СЂР°РјРµС‚СЂ)
 					int id_me = AGlobal::getInstance()->Me.ID;
 
 					if (id_me == 0)
@@ -2717,9 +2717,9 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 
 					if (list[0] == SPECIAL_ID_FORUM_MY_MESSAGES)
 					{
-						// спец-форум "Мои сообщения"
-						// по хорошему, надо просто в табличку unread добавить поле id_user и индекс для пользователя,
-						// что сильно ускорит запрос, однако, менять схему пока не хочется
+						// СЃРїРµС†-С„РѕСЂСѓРј "РњРѕРё СЃРѕРѕР±С‰РµРЅРёСЏ"
+						// РїРѕ С…РѕСЂРѕС€РµРјСѓ, РЅР°РґРѕ РїСЂРѕСЃС‚Рѕ РІ С‚Р°Р±Р»РёС‡РєСѓ unread РґРѕР±Р°РІРёС‚СЊ РїРѕР»Рµ id_user Рё РёРЅРґРµРєСЃ РґР»СЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ,
+						// С‡С‚Рѕ СЃРёР»СЊРЅРѕ СѓСЃРєРѕСЂРёС‚ Р·Р°РїСЂРѕСЃ, РѕРґРЅР°РєРѕ, РјРµРЅСЏС‚СЊ СЃС…РµРјСѓ РїРѕРєР° РЅРµ С…РѕС‡РµС‚СЃСЏ
 						sql += "DELETE FROM\n";
 						sql += "	`unread`\n";
 						sql += "WHERE\n";
@@ -2738,7 +2738,7 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 					}
 					else if (list[0] == SPECIAL_ID_FORUM_ANSWERS_TO_ME)
 					{
-						// спец-форум "Ответы мне"
+						// СЃРїРµС†-С„РѕСЂСѓРј "РћС‚РІРµС‚С‹ РјРЅРµ"
 						sql += "DELETE FROM\n";
 						sql += "	`unread`\n";
 						sql += "WHERE\n";
@@ -2747,7 +2747,7 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 				}
 				else
 				{
-					// все остальные форумы
+					// РІСЃРµ РѕСЃС‚Р°Р»СЊРЅС‹Рµ С„РѕСЂСѓРјС‹
 					sql += "DELETE FROM\n";
 					sql += "	`unread`\n";
 					sql += "WHERE\n";
@@ -2755,7 +2755,7 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 				}
 
 				if (date.isValid() == true)
-					sql += " AND\n	`message_date` <= " + QString::number(date.toTime_t());
+					sql += " AND\n	`message_date` <= " + QString::number(date.toSecsSinceEpoch());
 
 				break;
 
@@ -2775,7 +2775,7 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 				sql += "	)";
 
 				if (date.isValid() == true)
-					sql += " AND\n	`message_date` <= " + QString::number(date.toTime_t());
+					sql += " AND\n	`message_date` <= " + QString::number(date.toSecsSinceEpoch());
 
 				break;
 
@@ -2784,12 +2784,12 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 				sql += "DELETE FROM `unread`";
 
 				if (date.isValid() == true)
-					sql += "WHERE `message_date` <= " + QString::number(date.toTime_t());
+					sql += "WHERE `message_date` <= " + QString::number(date.toSecsSinceEpoch());
 
 				break;
 
 			default:
-				return returnError(QString::fromUtf8("Не указана группа объектов"));
+				return returnError(QString::fromUtf8("РќРµ СѓРєР°Р·Р°РЅР° РіСЂСѓРїРїР° РѕР±СЉРµРєС‚РѕРІ"));
 		}   // switch (type)
 	}
 	else   // if (read == true)
@@ -2820,7 +2820,7 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 				sql += "	`id` IN (" + ids + ")";
 
 				if (date.isValid() == true)
-					sql += " AND\n	`message_date` >= " + QString::number(date.toTime_t());
+					sql += " AND\n	`message_date` >= " + QString::number(date.toSecsSinceEpoch());
 
 				break;
 
@@ -2828,7 +2828,7 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 
 				/*
 
-				Запрос в общем виде с условием:
+				Р—Р°РїСЂРѕСЃ РІ РѕР±С‰РµРј РІРёРґРµ СЃ СѓСЃР»РѕРІРёРµРј:
 
 				sql += "WHERE\n";
 				sql += "	(\n";
@@ -2836,8 +2836,8 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 				sql += "		`id_topic` IN (" + ids + ")";
 				sql += "	)";
 
-				дает отвратительный план выполнения и исполняется в несколько раз дольше,
-				нежели этот же запрос, но разбитый на два простых, что и было сделано.
+				РґР°РµС‚ РѕС‚РІСЂР°С‚РёС‚РµР»СЊРЅС‹Р№ РїР»Р°РЅ РІС‹РїРѕР»РЅРµРЅРёСЏ Рё РёСЃРїРѕР»РЅСЏРµС‚СЃСЏ РІ РЅРµСЃРєРѕР»СЊРєРѕ СЂР°Р· РґРѕР»СЊС€Рµ,
+				РЅРµР¶РµР»Рё СЌС‚РѕС‚ Р¶Рµ Р·Р°РїСЂРѕСЃ, РЅРѕ СЂР°Р·Р±РёС‚С‹Р№ РЅР° РґРІР° РїСЂРѕСЃС‚С‹С…, С‡С‚Рѕ Рё Р±С‹Р»Рѕ СЃРґРµР»Р°РЅРѕ.
 
 				*/
 
@@ -2863,7 +2863,7 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 				sql += "	`id` IN (" + ids + ")";
 
 				if (date.isValid() == true)
-					sql += " AND\n	`message_date` >= " + QString::number(date.toTime_t());
+					sql += " AND\n	`message_date` >= " + QString::number(date.toSecsSinceEpoch());
 
 				sql_2 += "REPLACE INTO `unread`\n";
 				sql_2 += "(\n";
@@ -2887,7 +2887,7 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 				sql_2 += "	`id_topic` IN (" + ids + ")";
 
 				if (date.isValid() == true)
-					sql_2 += " AND\n	`message_date` >= " + QString::number(date.toTime_t());
+					sql_2 += " AND\n	`message_date` >= " + QString::number(date.toSecsSinceEpoch());
 
 				break;
 
@@ -2895,7 +2895,7 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 
 				if (list.count() == 1 && (list[0] == SPECIAL_ID_FORUM_MY_MESSAGES || list[0] == SPECIAL_ID_FORUM_ANSWERS_TO_ME))
 				{
-					// получение id текущего пользователя avalon (по хорошему, должна передаваться как параметр)
+					// РїРѕР»СѓС‡РµРЅРёРµ id С‚РµРєСѓС‰РµРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ avalon (РїРѕ С…РѕСЂРѕС€РµРјСѓ, РґРѕР»Р¶РЅР° РїРµСЂРµРґР°РІР°С‚СЊСЃСЏ РєР°Рє РїР°СЂР°РјРµС‚СЂ)
 					int id_me = AGlobal::getInstance()->Me.ID;
 
 					if (id_me == 0)
@@ -2903,7 +2903,7 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 
 					if (list[0] == SPECIAL_ID_FORUM_MY_MESSAGES)
 					{
-						// спец-форум "Мои сообщения"
+						// СЃРїРµС†-С„РѕСЂСѓРј "РњРѕРё СЃРѕРѕР±С‰РµРЅРёСЏ"
 						sql += "REPLACE INTO `unread`\n";
 						sql += "(\n";
 						sql += "	`id_message`,\n";
@@ -2927,7 +2927,7 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 					}
 					else if (list[0] == SPECIAL_ID_FORUM_ANSWERS_TO_ME)
 					{
-						// спец-форум "Ответы мне"
+						// СЃРїРµС†-С„РѕСЂСѓРј "РћС‚РІРµС‚С‹ РјРЅРµ"
 						sql += "REPLACE INTO `unread`\n";
 						sql += "(\n";
 						sql += "	`id_message`,\n";
@@ -2960,7 +2960,7 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 				}
 				else
 				{
-					// все остальные форумы
+					// РІСЃРµ РѕСЃС‚Р°Р»СЊРЅС‹Рµ С„РѕСЂСѓРјС‹
 					sql += "REPLACE INTO `unread`\n";
 					sql += "(\n";
 					sql += "	`id_message`,\n";
@@ -2984,7 +2984,7 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 				}
 
 				if (date.isValid() == true)
-					sql += " AND\n	`message_date` >= " + QString::number(date.toTime_t());
+					sql += " AND\n	`message_date` >= " + QString::number(date.toSecsSinceEpoch());
 
 				break;
 
@@ -3020,7 +3020,7 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 				sql += "	)";
 
 				if (date.isValid() == true)
-					sql += " AND\n	`message_date` >= " + QString::number(date.toTime_t());
+					sql += " AND\n	`message_date` >= " + QString::number(date.toSecsSinceEpoch());
 
 				break;
 
@@ -3046,12 +3046,12 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 				sql += "	`message`";
 
 				if (date.isValid() == true)
-					sql += "\nWHERE\n	`message_date` >= " + QString::number(date.toTime_t());
+					sql += "\nWHERE\n	`message_date` >= " + QString::number(date.toSecsSinceEpoch());
 
 				break;
 
 			default:
-				return returnError(QString::fromUtf8("Не указана группа объектов"));
+				return returnError(QString::fromUtf8("РќРµ СѓРєР°Р·Р°РЅР° РіСЂСѓРїРїР° РѕР±СЉРµРєС‚РѕРІ"));
 		}   // switch (type)
 	}   // if (read == true) else ...
 
@@ -3074,7 +3074,7 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 			return returnError(query_2->getLastError());
 	}
 
-	// обновление информации о пользователе, которому был ответ
+	// РѕР±РЅРѕРІР»РµРЅРёРµ РёРЅС„РѕСЂРјР°С†РёРё Рѕ РїРѕР»СЊР·РѕРІР°С‚РµР»Рµ, РєРѕС‚РѕСЂРѕРјСѓ Р±С‹Р» РѕС‚РІРµС‚
 	if (read == false)
 	{
 		sql  = "";
@@ -3111,12 +3111,12 @@ bool ASQLiteStorage::setIDsAsRead (const QList<int>& list, AIDSet type, bool rea
 bool ASQLiteStorage::unsubscribe (const QList<int>& list, AIDSet type, bool clean)
 {
 	if (!(type == idsGroup || type == idsForum))
-		return returnError(QString::fromUtf8("Указана неверная группа объектов"));
+		return returnError(QString::fromUtf8("РЈРєР°Р·Р°РЅР° РЅРµРІРµСЂРЅР°СЏ РіСЂСѓРїРїР° РѕР±СЉРµРєС‚РѕРІ"));
 
 	if (ASQLiteDatabase::transaction() == false)
 		return returnError(ASQLiteDatabase::getLastError());
 
-	// получение строки с id
+	// РїРѕР»СѓС‡РµРЅРёРµ СЃС‚СЂРѕРєРё СЃ id
 	QString ids;
 
 	for (int i = 0; i < list.count(); i++)
@@ -3129,11 +3129,11 @@ bool ASQLiteStorage::unsubscribe (const QList<int>& list, AIDSet type, bool clea
 
 	QString sql;
 
-	// отписка с очисткой
+	// РѕС‚РїРёСЃРєР° СЃ РѕС‡РёСЃС‚РєРѕР№
 	if (clean == true)
 	{
 		//
-		// удаление из списка непрочитанных
+		// СѓРґР°Р»РµРЅРёРµ РёР· СЃРїРёСЃРєР° РЅРµРїСЂРѕС‡РёС‚Р°РЅРЅС‹С…
 		//
 
 		sql += "DELETE FROM\n";
@@ -3174,7 +3174,7 @@ bool ASQLiteStorage::unsubscribe (const QList<int>& list, AIDSet type, bool clea
 		}
 
 		//
-		// удаление из списка рейтинга
+		// СѓРґР°Р»РµРЅРёРµ РёР· СЃРїРёСЃРєР° СЂРµР№С‚РёРЅРіР°
 		//
 
 		sql  = "";
@@ -3225,7 +3225,7 @@ bool ASQLiteStorage::unsubscribe (const QList<int>& list, AIDSet type, bool clea
 		}
 
 		//
-		// удаление из списка модерилок
+		// СѓРґР°Р»РµРЅРёРµ РёР· СЃРїРёСЃРєР° РјРѕРґРµСЂРёР»РѕРє
 		//
 
 		sql  = "";
@@ -3276,7 +3276,7 @@ bool ASQLiteStorage::unsubscribe (const QList<int>& list, AIDSet type, bool clea
 		}
 
 		//
-		// удаление из списка сообщений
+		// СѓРґР°Р»РµРЅРёРµ РёР· СЃРїРёСЃРєР° СЃРѕРѕР±С‰РµРЅРёР№
 		//
 
 		sql  = "";
@@ -3318,7 +3318,7 @@ bool ASQLiteStorage::unsubscribe (const QList<int>& list, AIDSet type, bool clea
 		}
 
 		//
-		// удаление из списка топиков, т.к. FOREIGN KEY не обрабатываются SQLite (хотя и позволяют себя указывать)
+		// СѓРґР°Р»РµРЅРёРµ РёР· СЃРїРёСЃРєР° С‚РѕРїРёРєРѕРІ, С‚.Рє. FOREIGN KEY РЅРµ РѕР±СЂР°Р±Р°С‚С‹РІР°СЋС‚СЃСЏ SQLite (С…РѕС‚СЏ Рё РїРѕР·РІРѕР»СЏСЋС‚ СЃРµР±СЏ СѓРєР°Р·С‹РІР°С‚СЊ)
 		//
 
 		sql  = "";
@@ -3361,7 +3361,7 @@ bool ASQLiteStorage::unsubscribe (const QList<int>& list, AIDSet type, bool clea
 	}
 
 	//
-	// удаление из подписаных
+	// СѓРґР°Р»РµРЅРёРµ РёР· РїРѕРґРїРёСЃР°РЅС‹С…
 	//
 
 	sql  = "";
@@ -3403,7 +3403,7 @@ bool ASQLiteStorage::unsubscribe (const QList<int>& list, AIDSet type, bool clea
 	}
 
 	//
-	// завершение транзакции
+	// Р·Р°РІРµСЂС€РµРЅРёРµ С‚СЂР°РЅР·Р°РєС†РёРё
 	//
 
 	if (ASQLiteDatabase::commit() == false)
@@ -3480,8 +3480,8 @@ bool ASQLiteStorage::addMessage2Send (const AMessage2Send& info)
 	query->bindValue(":id_forum",  info.IDForum);
 	query->bindValue(":subject",   info.Subject);
 	query->bindValue(":message",   info.Message);
-	query->bindValue(":date",      info.Date.toTime_t());
-	query->bindValue(":draft",     (info.Draft == true ? 1 : 0)); // иначе конвертится в текстовую строку "true" / "false"
+	query->bindValue(":date",      info.Date.toSecsSinceEpoch());
+	query->bindValue(":draft",     (info.Draft == true ? 1 : 0)); // РёРЅР°С‡Рµ РєРѕРЅРІРµСЂС‚РёС‚СЃСЏ РІ С‚РµРєСЃС‚РѕРІСѓСЋ СЃС‚СЂРѕРєСѓ "true" / "false"
 
 	if (query->exec() == false)
 		return returnError(query->getLastError());
@@ -3532,14 +3532,14 @@ bool ASQLiteStorage::getMessage2SendList (AMessageInfoList& list, bool drafts)
 		info.UserNick       = "";
 		info.Message        = query_select->value(4).toString();
 		info.IDArticle      = 0;
-		info.MessageDate    = QDateTime::fromTime_t(query_select->value(5).toUInt());
+		info.MessageDate    = QDateTime::fromSecsSinceEpoch(query_select->value(5).toUInt());
 		info.UpdateDate     = QDateTime();
 		info.UserRole       = "";
 		info.UserTitle      = "";
 		info.UserTitleColor = 0;
 		info.LastModerated  = QDateTime();
 
-		// временный таглайн
+		// РІСЂРµРјРµРЅРЅС‹Р№ С‚Р°РіР»Р°Р№РЅ
 		QString tagline = getTagline();
 
 		if (tagline.length() != 0)
@@ -3579,7 +3579,7 @@ bool ASQLiteStorage::addRating2Send (const ARating2Send& info)
 	query->bindValue(":id",         info.ID);
 	query->bindValue(":id_message", info.IDMessage);
 	query->bindValue(":rate",       info.Rate);
-	query->bindValue(":date",       info.Date.toTime_t());
+	query->bindValue(":date",       info.Date.toSecsSinceEpoch());
 
 	if (query->exec() == false)
 		return returnError(query->getLastError());
@@ -3648,12 +3648,12 @@ bool ASQLiteStorage::getRating2SendList (AMessageInfoList& message_list, ARating
 			return false;
 
 		message_info.IDArticle      = query_select->value(8).toInt();
-		message_info.MessageDate    = QDateTime::fromTime_t(query_select->value(9).toUInt());
-		message_info.UpdateDate     = QDateTime::fromTime_t(query_select->value(10).toUInt());
+		message_info.MessageDate    = QDateTime::fromSecsSinceEpoch(query_select->value(9).toUInt());
+		message_info.UpdateDate     = QDateTime::fromSecsSinceEpoch(query_select->value(10).toUInt());
 		message_info.UserRole       = query_select->value(11).toString();
 		message_info.UserTitle      = query_select->value(12).toString();
 		message_info.UserTitleColor = query_select->value(13).toInt();
-		message_info.LastModerated  = QDateTime::fromTime_t(query_select->value(14).toUInt());
+		message_info.LastModerated  = QDateTime::fromSecsSinceEpoch(query_select->value(14).toUInt());
 		message_info.Closed         = query_select->value(15).toInt();
 
 		message_list.append(message_info);
@@ -3663,7 +3663,7 @@ bool ASQLiteStorage::getRating2SendList (AMessageInfoList& message_list, ARating
 		rating_info.ID        = query_select->value(16).toInt();
 		rating_info.IDMessage = message_info.ID;
 		rating_info.Rate      = query_select->value(17).toInt();
-		rating_info.Date      = QDateTime::fromTime_t(query_select->value(18).toUInt());
+		rating_info.Date      = QDateTime::fromSecsSinceEpoch(query_select->value(18).toUInt());
 
 		rating_list.append(rating_info);
 	}
@@ -3703,7 +3703,7 @@ bool ASQLiteStorage::getRating2SendList (ARating2SendList& list)
 		rating_info.ID        = query_select->value(0).toInt();
 		rating_info.IDMessage = query_select->value(1).toInt();
 		rating_info.Rate      = query_select->value(2).toInt();
-		rating_info.Date      = QDateTime::fromTime_t(query_select->value(3).toUInt());
+		rating_info.Date      = QDateTime::fromSecsSinceEpoch(query_select->value(3).toUInt());
 
 		list.append(rating_info);
 	}
@@ -3720,7 +3720,7 @@ bool ASQLiteStorage::changeRating (int id, int new_rate)
 	sql += "	`rating2send`\n";
 	sql += "SET\n";
 	sql += "	`rate` = " + QString::number(new_rate) + ",\n";
-	sql += "	`date` = " + QString::number(QDateTime::currentDateTime().toTime_t()) + "\n";
+	sql += "	`date` = " + QString::number(QDateTime::currentDateTime().toSecsSinceEpoch()) + "\n";
 	sql += "WHERE\n";
 	sql += "	`id` = " + QString::number(id);
 
@@ -3772,7 +3772,7 @@ bool ASQLiteStorage::addModerate2Send (const AModerate2Send& info)
 	query->bindValue(":id_forum",     info.IDForum);
 	query->bindValue(":description",  info.Description);
 	query->bindValue(":as_moderator", info.AsModerator);
-	query->bindValue(":date",         info.Date.toTime_t());
+	query->bindValue(":date",         info.Date.toSecsSinceEpoch());
 
 	if (query->exec() == false)
 		return returnError(query->getLastError());
@@ -3844,12 +3844,12 @@ bool ASQLiteStorage::getModerate2SendList (AMessageInfoList& message_list, AMode
 			return false;
 
 		message_info.IDArticle      = query_select->value(8).toInt();
-		message_info.MessageDate    = QDateTime::fromTime_t(query_select->value(9).toUInt());
-		message_info.UpdateDate     = QDateTime::fromTime_t(query_select->value(10).toUInt());
+		message_info.MessageDate    = QDateTime::fromSecsSinceEpoch(query_select->value(9).toUInt());
+		message_info.UpdateDate     = QDateTime::fromSecsSinceEpoch(query_select->value(10).toUInt());
 		message_info.UserRole       = query_select->value(11).toString();
 		message_info.UserTitle      = query_select->value(12).toString();
 		message_info.UserTitleColor = query_select->value(13).toInt();
-		message_info.LastModerated  = QDateTime::fromTime_t(query_select->value(14).toUInt());
+		message_info.LastModerated  = QDateTime::fromSecsSinceEpoch(query_select->value(14).toUInt());
 		message_info.Closed         = query_select->value(15).toInt();
 
 		message_list.append(message_info);
@@ -3862,7 +3862,7 @@ bool ASQLiteStorage::getModerate2SendList (AMessageInfoList& message_list, AMode
 		moderate_info.IDForum     = query_select->value(18).toInt();
 		moderate_info.Description = query_select->value(19).toString();
 		moderate_info.AsModerator = query_select->value(20).toInt();
-		moderate_info.Date        = QDateTime::fromTime_t(query_select->value(21).toUInt());
+		moderate_info.Date        = QDateTime::fromSecsSinceEpoch(query_select->value(21).toUInt());
 
 		moderate_list.append(moderate_info);
 	}
@@ -3908,7 +3908,7 @@ bool ASQLiteStorage::getModerate2SendList (AModerate2SendList& list)
 		moderate_info.IDForum     = query_select->value(3).toInt();
 		moderate_info.Description = query_select->value(4).toString();
 		moderate_info.AsModerator = query_select->value(5).toInt();
-		moderate_info.Date        = QDateTime::fromTime_t(query_select->value(6).toUInt());
+		moderate_info.Date        = QDateTime::fromSecsSinceEpoch(query_select->value(6).toUInt());
 
 		list.append(moderate_info);
 	}
@@ -3942,7 +3942,7 @@ bool ASQLiteStorage::getModerate2SendInfo (int id, AModerate2Send& info)
 	if (query_select->exec() == false)
 		return returnError(query_select->getLastError());
 
-	info.ID = -1; // для проверки
+	info.ID = -1; // РґР»СЏ РїСЂРѕРІРµСЂРєРё
 
 	while (query_select->next())
 	{
@@ -3952,11 +3952,11 @@ bool ASQLiteStorage::getModerate2SendInfo (int id, AModerate2Send& info)
 		info.IDForum     = query_select->value(3).toInt();
 		info.Description = query_select->value(4).toString();
 		info.AsModerator = query_select->value(5).toInt();
-		info.Date        = QDateTime::fromTime_t(query_select->value(6).toUInt());
+		info.Date        = QDateTime::fromSecsSinceEpoch(query_select->value(6).toUInt());
 	}
 
 	if (info.ID == -1)
-		return returnError(QString::fromUtf8("Запрошенная информация о модерилке не найдена"));
+		return returnError(QString::fromUtf8("Р—Р°РїСЂРѕС€РµРЅРЅР°СЏ РёРЅС„РѕСЂРјР°С†РёСЏ Рѕ РјРѕРґРµСЂРёР»РєРµ РЅРµ РЅР°Р№РґРµРЅР°"));
 
 	return returnSuccess();
 }
@@ -4066,7 +4066,7 @@ bool ASQLiteStorage::deleteSpecial (const QList<int>& ids, int id_special)
 	else if (id_special == SPECIAL_ID_FORUM_MODERATE2SEND)
 		sql += "	`moderate2send`\n";
 	else
-		return returnError(QString::fromUtf8("Неизвестный спец-форум [") + QString::number(id_special) + "]");
+		return returnError(QString::fromUtf8("РќРµРёР·РІРµСЃС‚РЅС‹Р№ СЃРїРµС†-С„РѕСЂСѓРј [") + QString::number(id_special) + "]");
 
 	sql += "WHERE\n";
 	sql += "	`id` IN (";
@@ -4147,16 +4147,16 @@ bool ASQLiteStorage::compressStorage (IProgress* progress)
 		progress->onProgress(0);
 
 	#ifndef AVALON_USE_ZLIB
-	return returnError(QString::fromUtf8("скомпилируйте avalon с поддержкой zlib"));
+	return returnError(QString::fromUtf8("СЃРєРѕРјРїРёР»РёСЂСѓР№С‚Рµ avalon СЃ РїРѕРґРґРµСЂР¶РєРѕР№ zlib"));
 	#else
 
 	QString sql;
 
 	//
-	// заготовки запросов
+	// Р·Р°РіРѕС‚РѕРІРєРё Р·Р°РїСЂРѕСЃРѕРІ
 	//
 
-	// запрос на получение страницы
+	// Р·Р°РїСЂРѕСЃ РЅР° РїРѕР»СѓС‡РµРЅРёРµ СЃС‚СЂР°РЅРёС†С‹
 	sql += "SELECT\n";
 	sql += "	`id`,\n";
 	sql += "	`message`\n";
@@ -4174,7 +4174,7 @@ bool ASQLiteStorage::compressStorage (IProgress* progress)
 
 	query_select->setForwardOnly(true);
 
-	// запрос на обновление данных
+	// Р·Р°РїСЂРѕСЃ РЅР° РѕР±РЅРѕРІР»РµРЅРёРµ РґР°РЅРЅС‹С…
 	sql  = "";
 	sql += "UPDATE\n";
 	sql += "	`message`\n";
@@ -4190,10 +4190,10 @@ bool ASQLiteStorage::compressStorage (IProgress* progress)
 		return returnError(ASQLiteDatabase::getLastError());
 
 	//
-	// первичные значения
+	// РїРµСЂРІРёС‡РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 	//
 
-	// получение максимального и минимального ID
+	// РїРѕР»СѓС‡РµРЅРёРµ РјР°РєСЃРёРјР°Р»СЊРЅРѕРіРѕ Рё РјРёРЅРёРјР°Р»СЊРЅРѕРіРѕ ID
 	int min_id = 0;
 	int max_id = 0;
 
@@ -4203,39 +4203,39 @@ bool ASQLiteStorage::compressStorage (IProgress* progress)
 	if (getMaxIDMessage(max_id) == false)
 		return false;
 
-	// если нечего сжимать
+	// РµСЃР»Рё РЅРµС‡РµРіРѕ СЃР¶РёРјР°С‚СЊ
 	if (max_id - min_id == 0)
 	{
 		if (progress != NULL)
-			progress->onProgress(100, QString::fromUtf8("Сжатие хранилища завершено успешно!"));
+			progress->onProgress(100, QString::fromUtf8("РЎР¶Р°С‚РёРµ С…СЂР°РЅРёР»РёС‰Р° Р·Р°РІРµСЂС€РµРЅРѕ СѓСЃРїРµС€РЅРѕ!"));
 
 		return returnSuccess();
 	}
 
-	// заготовка памяти для сжатия сообщений
-	uLongf compressed_buf_size      = 3 * 1024 * 1024;                // размер буфера для сжатых данных (может меняться при необходимости)
-	Bytef* compressed_buf           = new Bytef[compressed_buf_size]; // буфер для сжатых данных
-	uLongf compressed_buf_size_real = 0;                              // реальная длина сжатых данных
+	// Р·Р°РіРѕС‚РѕРІРєР° РїР°РјСЏС‚Рё РґР»СЏ СЃР¶Р°С‚РёСЏ СЃРѕРѕР±С‰РµРЅРёР№
+	uLongf compressed_buf_size      = 3 * 1024 * 1024;                // СЂР°Р·РјРµСЂ Р±СѓС„РµСЂР° РґР»СЏ СЃР¶Р°С‚С‹С… РґР°РЅРЅС‹С… (РјРѕР¶РµС‚ РјРµРЅСЏС‚СЊСЃСЏ РїСЂРё РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚Рё)
+	Bytef* compressed_buf           = new Bytef[compressed_buf_size]; // Р±СѓС„РµСЂ РґР»СЏ СЃР¶Р°С‚С‹С… РґР°РЅРЅС‹С…
+	uLongf compressed_buf_size_real = 0;                              // СЂРµР°Р»СЊРЅР°СЏ РґР»РёРЅР° СЃР¶Р°С‚С‹С… РґР°РЅРЅС‹С…
 
-	// параметры постраничной обработки
+	// РїР°СЂР°РјРµС‚СЂС‹ РїРѕСЃС‚СЂР°РЅРёС‡РЅРѕР№ РѕР±СЂР°Р±РѕС‚РєРё
 	int page = 1000;
 	int id_1 = min_id;
 	int id_2 = id_1 + page;
 
 	//
-	// сжатие блоками по странице
+	// СЃР¶Р°С‚РёРµ Р±Р»РѕРєР°РјРё РїРѕ СЃС‚СЂР°РЅРёС†Рµ
 	//
 
 	while (id_1 <= max_id)
 	{
-		// страницу оптимальнее обрабатывать в транзакции
+		// СЃС‚СЂР°РЅРёС†Сѓ РѕРїС‚РёРјР°Р»СЊРЅРµРµ РѕР±СЂР°Р±Р°С‚С‹РІР°С‚СЊ РІ С‚СЂР°РЅР·Р°РєС†РёРё
 		if (ASQLiteDatabase::transaction() == false)
 		{
 			delete [] compressed_buf;
 			return returnError(ASQLiteDatabase::getLastError());
 		}
 
-		// получение страницы
+		// РїРѕР»СѓС‡РµРЅРёРµ СЃС‚СЂР°РЅРёС†С‹
 		query_select->bindValue(":id_1", id_1);
 		query_select->bindValue(":id_2", id_2);
 
@@ -4249,7 +4249,7 @@ bool ASQLiteStorage::compressStorage (IProgress* progress)
 		}
 
 		//
-		// обработка страницы
+		// РѕР±СЂР°Р±РѕС‚РєР° СЃС‚СЂР°РЅРёС†С‹
 		//
 
 		while (query_select->next())
@@ -4260,7 +4260,7 @@ bool ASQLiteStorage::compressStorage (IProgress* progress)
 			uLongf       source_buf_size = message.count();
 			const Bytef* source_buf      = (const Bytef*)message.constData();
 
-			// проверка на достаточную размерность буфера сжатия
+			// РїСЂРѕРІРµСЂРєР° РЅР° РґРѕСЃС‚Р°С‚РѕС‡РЅСѓСЋ СЂР°Р·РјРµСЂРЅРѕСЃС‚СЊ Р±СѓС„РµСЂР° СЃР¶Р°С‚РёСЏ
 			if (source_buf_size * 2 > compressed_buf_size)
 			{
 				delete [] compressed_buf;
@@ -4270,10 +4270,10 @@ bool ASQLiteStorage::compressStorage (IProgress* progress)
 
 			compressed_buf_size_real = compressed_buf_size;
 
-			// сжатие (см. документацию по zlib)
+			// СЃР¶Р°С‚РёРµ (СЃРј. РґРѕРєСѓРјРµРЅС‚Р°С†РёСЋ РїРѕ zlib)
 			int z_result = compress2(compressed_buf, &compressed_buf_size_real, source_buf, source_buf_size, 9);
 
-			// анализ результата, если произошла ошибка или размер сжатых данных больше исходных
+			// Р°РЅР°Р»РёР· СЂРµР·СѓР»СЊС‚Р°С‚Р°, РµСЃР»Рё РїСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР° РёР»Рё СЂР°Р·РјРµСЂ СЃР¶Р°С‚С‹С… РґР°РЅРЅС‹С… Р±РѕР»СЊС€Рµ РёСЃС…РѕРґРЅС‹С…
 			bool compressed;
 
 			if (z_result != Z_OK)
@@ -4311,11 +4311,11 @@ bool ASQLiteStorage::compressStorage (IProgress* progress)
 			return returnError(msg);
 		}
 
-		// вычисление новой страницы
+		// РІС‹С‡РёСЃР»РµРЅРёРµ РЅРѕРІРѕР№ СЃС‚СЂР°РЅРёС†С‹
 		id_1 = id_2;
 		id_2 = id_1 + page;
 
-		// прогресс операции
+		// РїСЂРѕРіСЂРµСЃСЃ РѕРїРµСЂР°С†РёРё
 		if (progress != NULL)
 			progress->onProgress(id_1 * 100 / max_id);
 
@@ -4325,10 +4325,10 @@ bool ASQLiteStorage::compressStorage (IProgress* progress)
 
 	if (progress != NULL)
 	{
-		progress->onProgress(100, QString::fromUtf8("Сжатие хранилища завершено успешно!"));
+		progress->onProgress(100, QString::fromUtf8("РЎР¶Р°С‚РёРµ С…СЂР°РЅРёР»РёС‰Р° Р·Р°РІРµСЂС€РµРЅРѕ СѓСЃРїРµС€РЅРѕ!"));
 		progress->onProgress(100, QString::fromUtf8(" "));
-		progress->onProgress(100, QString::fromUtf8("Для уменьшения фрагментации данных"));
-		progress->onProgress(100, QString::fromUtf8("выполните команды VACUUM и ANALYZE."));
+		progress->onProgress(100, QString::fromUtf8("Р”Р»СЏ СѓРјРµРЅСЊС€РµРЅРёСЏ С„СЂР°РіРјРµРЅС‚Р°С†РёРё РґР°РЅРЅС‹С…"));
+		progress->onProgress(100, QString::fromUtf8("РІС‹РїРѕР»РЅРёС‚Рµ РєРѕРјР°РЅРґС‹ VACUUM Рё ANALYZE."));
 	}
 
 	return returnSuccess();
@@ -4342,16 +4342,16 @@ bool ASQLiteStorage::uncompressStorage (IProgress* progress)
 		progress->onProgress(0);
 
 	#ifndef AVALON_USE_ZLIB
-	return returnError(QString::fromUtf8("скомпилируйте avalon с поддержкой zlib"));
+	return returnError(QString::fromUtf8("СЃРєРѕРјРїРёР»РёСЂСѓР№С‚Рµ avalon СЃ РїРѕРґРґРµСЂР¶РєРѕР№ zlib"));
 	#else
 
 	QString sql;
 
 	//
-	// заготовки запросов
+	// Р·Р°РіРѕС‚РѕРІРєРё Р·Р°РїСЂРѕСЃРѕРІ
 	//
 
-	// запрос на получение страницы
+	// Р·Р°РїСЂРѕСЃ РЅР° РїРѕР»СѓС‡РµРЅРёРµ СЃС‚СЂР°РЅРёС†С‹
 	sql += "SELECT\n";
 	sql += "	`id`,\n";
 	sql += "	`message`\n";
@@ -4369,7 +4369,7 @@ bool ASQLiteStorage::uncompressStorage (IProgress* progress)
 
 	query_select->setForwardOnly(true);
 
-	// запрос на обновление данных
+	// Р·Р°РїСЂРѕСЃ РЅР° РѕР±РЅРѕРІР»РµРЅРёРµ РґР°РЅРЅС‹С…
 	sql  = "";
 	sql += "UPDATE\n";
 	sql += "	`message`\n";
@@ -4385,10 +4385,10 @@ bool ASQLiteStorage::uncompressStorage (IProgress* progress)
 		return returnError(ASQLiteDatabase::getLastError());
 
 	//
-	// первичные значения
+	// РїРµСЂРІРёС‡РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 	//
 
-	// получение максимального и минимального ID
+	// РїРѕР»СѓС‡РµРЅРёРµ РјР°РєСЃРёРјР°Р»СЊРЅРѕРіРѕ Рё РјРёРЅРёРјР°Р»СЊРЅРѕРіРѕ ID
 	int min_id = 0;
 	int max_id = 0;
 
@@ -4398,39 +4398,39 @@ bool ASQLiteStorage::uncompressStorage (IProgress* progress)
 	if (getMaxIDMessage(max_id) == false)
 		return false;
 
-	// если нечего сжимать
+	// РµСЃР»Рё РЅРµС‡РµРіРѕ СЃР¶РёРјР°С‚СЊ
 	if (max_id - min_id == 0)
 	{
 		if (progress != NULL)
-			progress->onProgress(100, QString::fromUtf8("Распаковка хранилища завершена успешно!"));
+			progress->onProgress(100, QString::fromUtf8("Р Р°СЃРїР°РєРѕРІРєР° С…СЂР°РЅРёР»РёС‰Р° Р·Р°РІРµСЂС€РµРЅР° СѓСЃРїРµС€РЅРѕ!"));
 
 		return returnSuccess();
 	}
 
-	// заготовка памяти для распаковки сообщений
-	uLongf uncompressed_buf_size      = 3 * 1024 * 1024;                  // размер распакованных данных (меняется при необходимости)
-	Bytef* uncompressed_buf           = new Bytef[uncompressed_buf_size]; // буфер распакованных данных
-	uLongf uncompressed_buf_size_real = uncompressed_buf_size;            // реальный размер распакованных данных
+	// Р·Р°РіРѕС‚РѕРІРєР° РїР°РјСЏС‚Рё РґР»СЏ СЂР°СЃРїР°РєРѕРІРєРё СЃРѕРѕР±С‰РµРЅРёР№
+	uLongf uncompressed_buf_size      = 3 * 1024 * 1024;                  // СЂР°Р·РјРµСЂ СЂР°СЃРїР°РєРѕРІР°РЅРЅС‹С… РґР°РЅРЅС‹С… (РјРµРЅСЏРµС‚СЃСЏ РїСЂРё РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚Рё)
+	Bytef* uncompressed_buf           = new Bytef[uncompressed_buf_size]; // Р±СѓС„РµСЂ СЂР°СЃРїР°РєРѕРІР°РЅРЅС‹С… РґР°РЅРЅС‹С…
+	uLongf uncompressed_buf_size_real = uncompressed_buf_size;            // СЂРµР°Р»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ СЂР°СЃРїР°РєРѕРІР°РЅРЅС‹С… РґР°РЅРЅС‹С…
 
-	// параметры постраничной обработки
+	// РїР°СЂР°РјРµС‚СЂС‹ РїРѕСЃС‚СЂР°РЅРёС‡РЅРѕР№ РѕР±СЂР°Р±РѕС‚РєРё
 	int page = 1000;
 	int id_1 = min_id;
 	int id_2 = id_1 + page;
 
 	//
-	// сжатие блоками по странице
+	// СЃР¶Р°С‚РёРµ Р±Р»РѕРєР°РјРё РїРѕ СЃС‚СЂР°РЅРёС†Рµ
 	//
 
 	while (id_1 <= max_id)
 	{
-		// страницу оптимальнее обрабатывать в транзакции
+		// СЃС‚СЂР°РЅРёС†Сѓ РѕРїС‚РёРјР°Р»СЊРЅРµРµ РѕР±СЂР°Р±Р°С‚С‹РІР°С‚СЊ РІ С‚СЂР°РЅР·Р°РєС†РёРё
 		if (ASQLiteDatabase::transaction() == false)
 		{
 			delete [] uncompressed_buf;
 			return returnError(ASQLiteDatabase::getLastError());
 		}
 
-		// получение страницы
+		// РїРѕР»СѓС‡РµРЅРёРµ СЃС‚СЂР°РЅРёС†С‹
 		query_select->bindValue(":id_1", id_1);
 		query_select->bindValue(":id_2", id_2);
 
@@ -4444,7 +4444,7 @@ bool ASQLiteStorage::uncompressStorage (IProgress* progress)
 		}
 
 		//
-		// обработка страницы
+		// РѕР±СЂР°Р±РѕС‚РєР° СЃС‚СЂР°РЅРёС†С‹
 		//
 
 		while (query_select->next())
@@ -4457,7 +4457,7 @@ bool ASQLiteStorage::uncompressStorage (IProgress* progress)
 
 			uncompressed_buf_size_real = uncompressed_buf_size;
 
-			// распаковка
+			// СЂР°СЃРїР°РєРѕРІРєР°
 			while (true)
 			{
 				int z_result = uncompress(uncompressed_buf, &uncompressed_buf_size_real, compressed_buf, compressed_buf_size);
@@ -4482,7 +4482,7 @@ bool ASQLiteStorage::uncompressStorage (IProgress* progress)
 				}
 				else if (z_result == Z_BUF_ERROR)
 				{
-					// не хватило длины буфера для распаковки
+					// РЅРµ С…РІР°С‚РёР»Рѕ РґР»РёРЅС‹ Р±СѓС„РµСЂР° РґР»СЏ СЂР°СЃРїР°РєРѕРІРєРё
 					delete [] uncompressed_buf;
 
 					uncompressed_buf_size     *= 2;
@@ -4496,7 +4496,7 @@ bool ASQLiteStorage::uncompressStorage (IProgress* progress)
 
 				ASQLiteDatabase::rollback();
 
-				// прочие фатальные ошибки
+				// РїСЂРѕС‡РёРµ С„Р°С‚Р°Р»СЊРЅС‹Рµ РѕС€РёР±РєРё
 				if (z_result == Z_MEM_ERROR)
 					return returnError("Z_MEM_ERROR: there was not enough memory.");
 				else if (z_result == Z_DATA_ERROR)
@@ -4519,11 +4519,11 @@ bool ASQLiteStorage::uncompressStorage (IProgress* progress)
 			return returnError(msg);
 		}
 
-		// вычисление новой страницы
+		// РІС‹С‡РёСЃР»РµРЅРёРµ РЅРѕРІРѕР№ СЃС‚СЂР°РЅРёС†С‹
 		id_1 = id_2;
 		id_2 = id_1 + page;
 
-		// прогресс операции
+		// РїСЂРѕРіСЂРµСЃСЃ РѕРїРµСЂР°С†РёРё
 		if (progress != NULL)
 			progress->onProgress(id_1 * 100 / max_id);
 
@@ -4533,10 +4533,10 @@ bool ASQLiteStorage::uncompressStorage (IProgress* progress)
 
 	if (progress != NULL)
 	{
-		progress->onProgress(100, QString::fromUtf8("Распаковка хранилища завершена успешно!"));
+		progress->onProgress(100, QString::fromUtf8("Р Р°СЃРїР°РєРѕРІРєР° С…СЂР°РЅРёР»РёС‰Р° Р·Р°РІРµСЂС€РµРЅР° СѓСЃРїРµС€РЅРѕ!"));
 		progress->onProgress(100, QString::fromUtf8(" "));
-		progress->onProgress(100, QString::fromUtf8("Для уменьшения фрагментации данных"));
-		progress->onProgress(100, QString::fromUtf8("выполните команды VACUUM и ANALYZE."));
+		progress->onProgress(100, QString::fromUtf8("Р”Р»СЏ СѓРјРµРЅСЊС€РµРЅРёСЏ С„СЂР°РіРјРµРЅС‚Р°С†РёРё РґР°РЅРЅС‹С…"));
+		progress->onProgress(100, QString::fromUtf8("РІС‹РїРѕР»РЅРёС‚Рµ РєРѕРјР°РЅРґС‹ VACUUM Рё ANALYZE."));
 	}
 
 	return returnSuccess();
@@ -4554,7 +4554,7 @@ bool ASQLiteStorage::getMessagePath (int id_message, int& id_forum, QList<int>& 
 
 	QString sql;
 
-	// запрос на получение первичной информации
+	// Р·Р°РїСЂРѕСЃ РЅР° РїРѕР»СѓС‡РµРЅРёРµ РїРµСЂРІРёС‡РЅРѕР№ РёРЅС„РѕСЂРјР°С†РёРё
 	sql += "SELECT\n";
 	sql += "	`id_topic`,\n";
 	sql += "	`id_parent`,\n";
@@ -4581,11 +4581,11 @@ bool ASQLiteStorage::getMessagePath (int id_message, int& id_forum, QList<int>& 
 			path.append(id_message);
 	}
 
-	// сообщение не найдено или нет сообщений выше по дереву
+	// СЃРѕРѕР±С‰РµРЅРёРµ РЅРµ РЅР°Р№РґРµРЅРѕ РёР»Рё РЅРµС‚ СЃРѕРѕР±С‰РµРЅРёР№ РІС‹С€Рµ РїРѕ РґРµСЂРµРІСѓ
 	if (id_forum == 0 || id_parent == 0)
 		return returnSuccess();
 
-	// запрос для прохода к корню ветки
+	// Р·Р°РїСЂРѕСЃ РґР»СЏ РїСЂРѕС…РѕРґР° Рє РєРѕСЂРЅСЋ РІРµС‚РєРё
 	sql  = "";
 	sql += "SELECT\n";
 	sql += "	`id_parent`\n";
@@ -4599,7 +4599,7 @@ bool ASQLiteStorage::getMessagePath (int id_message, int& id_forum, QList<int>& 
 	if (query_select.isNull() == true)
 		return returnError(ASQLiteDatabase::getLastError());
 
-	// проход до корня
+	// РїСЂРѕС…РѕРґ РґРѕ РєРѕСЂРЅСЏ
 	while (id_parent != 0)
 	{
 		path.insert(0, id_parent);
@@ -4677,7 +4677,7 @@ bool ASQLiteStorage::hasBroken (bool& result)
 
 bool ASQLiteStorage::getMyMessageList (int id_me, int count, QList<int>& list)
 {
-	// анонимы нам не интересны
+	// Р°РЅРѕРЅРёРјС‹ РЅР°Рј РЅРµ РёРЅС‚РµСЂРµСЃРЅС‹
 	if (id_me == 0)
 		return returnSuccess();
 
@@ -4715,7 +4715,7 @@ bool ASQLiteStorage::getMyMessageList (int id_me, int count, QList<int>& list)
 
 bool ASQLiteStorage::getAnswers2MeList (int id_me, int count, QList<int>& list)
 {
-	// анонимы нам не интересны
+	// Р°РЅРѕРЅРёРјС‹ РЅР°Рј РЅРµ РёРЅС‚РµСЂРµСЃРЅС‹
 	if (id_me == 0)
 		return returnSuccess();
 
@@ -4760,3 +4760,4 @@ bool ASQLiteStorage::getAnswers2MeList (int id_me, int count, QList<int>& list)
 
 }
 //----------------------------------------------------------------------------------------------
+

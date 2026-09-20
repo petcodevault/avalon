@@ -526,7 +526,7 @@ QString AFormatter::formatSimpleText (const QString& text)
 
 		result.replace(img.cap(0), html);
 
-		index += std::min(img.matchedLength(), html.length());
+		index += std::min(static_cast<int>(img.matchedLength()), static_cast<int>(html.length()));
 	}
 
 	//
@@ -656,7 +656,7 @@ QString AFormatter::formatHyperlinks (const QString& text)
 
 		result.replace(email.cap(0), html);
 
-		index += std::min(email.matchedLength(), html.length());
+		index += std::min(static_cast<int>(email.matchedLength()), static_cast<int>(html.length()));
 	}
 
 	// msdn url

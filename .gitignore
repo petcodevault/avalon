@@ -3,7 +3,7 @@ avalon
 
 # временные файлы сборки
 debug/*
-release/*
+release/
 .qmake.stash
 
 # файлы, генерируемые qmake

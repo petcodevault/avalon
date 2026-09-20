@@ -4,10 +4,21 @@
 #include "webservice.h"
 //----------------------------------------------------------------------------------------------
 
-AWebView::AWebView (QWidget* parent) : QWebView (parent)
+AWebView::AWebView (QWidget* parent) :
+#ifndef AVALON_TEXT_BROWSER
+	QWebView (parent)
+#else
+	QTextBrowser (parent), m_page(new AWebPage(this))
+#endif
 {
 	LinkHovered = false;
 
+#ifdef AVALON_TEXT_BROWSER
+	setOpenLinks(false);
+	setOpenExternalLinks(false);
+	connect(this, SIGNAL(anchorClicked(const QUrl&)), m_page, SIGNAL(linkClicked(const QUrl&)));
+	connect(this, SIGNAL(highlighted(const QString&)), this, SLOT(text_browser_link_hovered(const QString&)));
+#else
 	setPage(new AWebPage(this));
 
 	page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
@@ -35,21 +46,48 @@ AWebView::AWebView (QWidget* parent) : QWebView (parent)
 
 	// полезно для отладки генерируемого HTML
 	settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
+#endif
 };
 //----------------------------------------------------------------------------------------------
 
 void AWebView::keyPressEvent (QKeyEvent* event)
 {
 	if (event->matches(QKeySequence::Copy) == true)
+	{
+#ifndef AVALON_TEXT_BROWSER
 		pageAction(QWebPage::Copy)->trigger();
+	#else
+		copy();
+	#endif
+	}
 	else
+	{
+#ifndef AVALON_TEXT_BROWSER
 		QWebView::keyPressEvent(event);
+	#else
+		QTextBrowser::keyPressEvent(event);
+	#endif
+	}
 }
 //----------------------------------------------------------------------------------------------
 
 bool AWebView::canScrollPage ()
 {
+#ifndef AVALON_TEXT_BROWSER
 	return (page()->mainFrame()->scrollBarValue(Qt::Vertical) != page()->mainFrame()->scrollBarMaximum(Qt::Vertical));
+#else
+	return verticalScrollBar()->value() != verticalScrollBar()->maximum();
+#endif
+}
+//----------------------------------------------------------------------------------------------
+
+QString AWebView::selectedText () const
+{
+#ifndef AVALON_TEXT_BROWSER
+	return page()->selectedText();
+#else
+	return textCursor().selectedText();
+#endif
 }
 //----------------------------------------------------------------------------------------------
 
@@ -62,6 +100,12 @@ void AWebView::scrollPage ()
 
 void AWebView::contextMenuEvent (QContextMenuEvent* event)
 {
+#ifdef AVALON_TEXT_BROWSER
+	if (textCursor().selectedText().length() == 0 || LinkHovered == true)
+		QTextBrowser::contextMenuEvent(event);
+	else
+		QTextBrowser::contextMenuEvent(event);
+#else
 	QString selected = page()->selectedText();
 
 	if (selected.length() == 0 || LinkHovered == true)
@@ -102,12 +146,20 @@ void AWebView::contextMenuEvent (QContextMenuEvent* event)
 
 		delete m_menu;
 	}
+#endif
 }
+
+#ifdef AVALON_TEXT_BROWSER
+void AWebView::text_browser_link_hovered (const QString& link)
+{
+	m_page->linkHovered(link, QString(), QString());
+}
+#endif
 //----------------------------------------------------------------------------------------------
 
 void AWebView::menu_yandex_triggered ()
 {
-	QString selected = page()->selectedText();
+	QString selected = selectedText();
 
 	QString url = (QString)"http://yandex.ru/yandsearch?text=" + selected;
 
@@ -117,7 +169,7 @@ void AWebView::menu_yandex_triggered ()
 
 void AWebView::menu_wikipedia_triggered ()
 {
-	QString selected = page()->selectedText();
+	QString selected = selectedText();
 
 	QString url = (QString)"https://ru.wikipedia.org/wiki/" + selected;
 
@@ -127,7 +179,7 @@ void AWebView::menu_wikipedia_triggered ()
 
 void AWebView::menu_google_triggered ()
 {
-	QString selected = page()->selectedText();
+	QString selected = selectedText();
 
 	QString url = (QString)"https://www.google.ru/search?hl=ru&q=" + selected;
 
@@ -137,7 +189,7 @@ void AWebView::menu_google_triggered ()
 
 void AWebView::menu_google_translate_triggered ()
 {
-	QString selected = page()->selectedText();
+	QString selected = selectedText();
 
 	// примитивная проверка на то, что текст английский
 	int is_english = 0;
@@ -159,7 +211,7 @@ void AWebView::menu_google_translate_triggered ()
 
 void AWebView::menu_rsdn_triggered ()
 {
-	QString selected = page()->selectedText();
+	QString selected = selectedText();
 
 	QString url = AGlobal::getInstance()->rsdnUrl() + "/rsdnsearch?text=" + selected;
 

@@ -99,7 +99,7 @@ void FormModerate::button_ok_clicked ()
 	info.Date        = QDateTime::currentDateTime();
 
 	if (m_id_edit == 0)
-		info.ID = info.Date.toTime_t(); // это локальный ID
+		info.ID = static_cast<int>(info.Date.toSecsSinceEpoch()); // это локальный ID
 	else
 		info.ID = m_id_edit;
 

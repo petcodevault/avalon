@@ -1,8 +1,6 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
 
-export QT_SELECT=5
-
 override_dh_auto_clean:
 	if [ -f Makefile ]; then make clean; fi
 	rm -f Makefile
@@ -12,18 +10,18 @@ override_dh_auto_clean:
 	rm -f avalon
 
 override_dh_auto_configure:
-	qmake -project -recursive -Wall -nopwd -o avalon.pro                \
-		"CONFIG         += release"                                 \
-		"QT             += network sql core widgets webkitwidgets"  \
-		"INCLUDEPATH    += $(CURDIR)/src"                           \
-		"LIBS           += -laspell -lz"                            \
-		"DEFINES        += AVALON_PACKAGE"                          \
-		"QMAKE_CPPFLAGS *= $(shell dpkg-buildflags --get CPPFLAGS)" \
-		"QMAKE_CFLAGS   *= $(shell dpkg-buildflags --get CFLAGS)"   \
-		"QMAKE_CXXFLAGS *= $(shell dpkg-buildflags --get CXXFLAGS)" \
-		"QMAKE_LFLAGS   *= $(shell dpkg-buildflags --get LDFLAGS)"  \
-		$(CURDIR)/src
-	qmake avalon.pro
+	printf '%s\n' \
+		'CONFIG += release' \
+		'QT += network sql core widgets' \
+		'LIBS += -laspell -lz' \
+		'DEFINES += AVALON_TEXT_BROWSER AVALON_PACKAGE' \
+		'INCLUDEPATH += $(CURDIR)/src' \
+		'TEMPLATE = app' \
+		'TARGET = avalon' \
+		'SOURCES += $$$$files($(CURDIR)/src/*.cpp, true)' \
+		'HEADERS += $$$$files($(CURDIR)/src/*.h, true)' \
+		'RESOURCES += $(CURDIR)/src/resource.qrc' > avalon.pro
+	qmake6 avalon.pro
 
 override_dh_auto_test:
 	/bin/true

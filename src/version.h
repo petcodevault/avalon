@@ -7,8 +7,8 @@
 #define _avalon_version_h_
 
 /*!
- * \brief Номер билда (3.0.2)
+ * \brief Номер билда (3.0.3)
  */
-#define AVALON_BUILD 2
+#define AVALON_BUILD 3
 
 #endif   // _avalon_version_h_

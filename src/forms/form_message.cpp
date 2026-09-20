@@ -225,7 +225,7 @@ void FormMessage::sendMessage (bool draft)
 	info.Draft    = draft;
 
 	if (m_edit_id == 0)
-		info.ID = info.Date.toTime_t(); // это локальный ID
+		info.ID = static_cast<int>(info.Date.toSecsSinceEpoch()); // это локальный ID
 	else
 		info.ID = m_edit_id; // редактируемый ID
 
